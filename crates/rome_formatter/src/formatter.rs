@@ -101,6 +101,7 @@ impl Formatter {
 	/// ```
 	pub fn format_token(&self, syntax_token: &SyntaxToken) -> FormatResult<FormatElement> {
 		Ok(token(syntax_token.text_trimmed()))
+		}
 	}
 
 	/// Formats each child and returns the result as a list.

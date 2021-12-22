@@ -11,20 +11,18 @@ JsModule {
             implements_clause: missing (optional),
             l_curly_token: L_CURLY@14..15 "{" [] [],
             members: JsClassMemberList [
-                JsSetterClassMember {
-                    access_modifier: missing (optional),
-                    static_token: missing (optional),
-                    abstract_token: missing (optional),
-                    set_token: SET_KW@15..22 "set" [Whitespace("\n  ")] [Whitespace(" ")],
-                    name: JsLiteralMemberName {
-                        value: IDENT@22..25 "foo" [] [],
-                    },
-                    l_paren_token: L_PAREN@25..26 "(" [] [],
-                    parameter: JsIdentifierBinding {
-                        name_token: IDENT@26..27 "a" [] [],
-                    },
-                    r_paren_token: R_PAREN@27..28 ")" [] [],
-                    body: missing (required),
+                JsUnknownMember {
+                    items: [
+                        SET_KW@15..22 "set" [Whitespace("\n  ")] [Whitespace(" ")],
+                        JsLiteralMemberName {
+                            value: IDENT@22..25 "foo" [] [],
+                        },
+                        L_PAREN@25..26 "(" [] [],
+                        JsIdentifierBinding {
+                            name_token: IDENT@26..27 "a" [] [],
+                        },
+                        R_PAREN@27..28 ")" [] [],
+                    ],
                 },
             ],
             r_curly_token: missing R_CURLY@28..28,
@@ -45,18 +43,14 @@ JsModule {
       3: (empty)
       4: L_CURLY@14..15 "{" [] []
       5: JS_CLASS_MEMBER_LIST@15..28
-        0: JS_SETTER_CLASS_MEMBER@15..28
-          0: (empty)
-          1: (empty)
-          2: (empty)
-          3: SET_KW@15..22 "set" [Whitespace("\n  ")] [Whitespace(" ")]
-          4: JS_LITERAL_MEMBER_NAME@22..25
+        0: JS_UNKNOWN_MEMBER@15..28
+          0: SET_KW@15..22 "set" [Whitespace("\n  ")] [Whitespace(" ")]
+          1: JS_LITERAL_MEMBER_NAME@22..25
             0: IDENT@22..25 "foo" [] []
-          5: L_PAREN@25..26 "(" [] []
-          6: JS_IDENTIFIER_BINDING@26..27
+          2: L_PAREN@25..26 "(" [] []
+          3: JS_IDENTIFIER_BINDING@26..27
             0: IDENT@26..27 "a" [] []
-          7: R_PAREN@27..28 ")" [] []
-          8: (empty)
+          4: R_PAREN@27..28 ")" [] []
       6: missing R_CURLY@28..28
   3: EOF@28..29 "" [Whitespace("\n")] []
 --

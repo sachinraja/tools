@@ -2,23 +2,22 @@ JsModule {
     interpreter_token: missing (optional),
     directives: JsDirectiveList [],
     items: JsModuleItemList [
-        JsForStatement {
-            for_token: FOR_KW@0..4 "for" [] [Whitespace(" ")],
-            l_paren_token: missing (required),
-            initializer: missing (optional),
-            first_semi_token: SEMICOLON@4..5 ";" [] [],
-            test: missing (optional),
-            second_semi_token: SEMICOLON@5..7 ";" [] [Whitespace(" ")],
-            update: JsObjectExpression {
-                l_curly_token: L_CURLY@7..8 "{" [] [],
-                members: JsObjectMemberList [],
-                r_curly_token: R_CURLY@8..9 "}" [] [],
-            },
-            r_paren_token: missing (required),
-            body: JsForStatement {
-                for_token: FOR_KW@9..14 "for" [Whitespace("\n")] [Whitespace(" ")],
-                l_paren_token: missing (required),
-                initializer: JsVariableDeclarations {
+        JsUnknownStatement {
+            items: [
+                FOR_KW@0..4 "for" [] [Whitespace(" ")],
+                SEMICOLON@4..5 ";" [] [],
+                SEMICOLON@5..7 ";" [] [Whitespace(" ")],
+                JsBlockStatement {
+                    l_curly_token: L_CURLY@7..8 "{" [] [],
+                    statements: JsStatementList [],
+                    r_curly_token: R_CURLY@8..9 "}" [] [],
+                },
+            ],
+        },
+        JsUnknownStatement {
+            items: [
+                FOR_KW@9..14 "for" [Whitespace("\n")] [Whitespace(" ")],
+                JsVariableDeclarations {
                     kind: LET_KW@14..18 "let" [] [Whitespace(" ")],
                     items: JsVariableDeclarationList [
                         JsVariableDeclaration {
@@ -36,8 +35,8 @@ JsModule {
                         },
                     ],
                 },
-                first_semi_token: SEMICOLON@23..25 ";" [] [Whitespace(" ")],
-                test: JsBinaryExpression {
+                SEMICOLON@23..25 ";" [] [Whitespace(" ")],
+                JsBinaryExpression {
                     left: JsIdentifierExpression {
                         name: JsReferenceIdentifier {
                             value_token: IDENT@25..27 "i" [] [Whitespace(" ")],
@@ -48,84 +47,84 @@ JsModule {
                         value_token: JS_NUMBER_LITERAL@29..31 "10" [] [],
                     },
                 },
-                second_semi_token: SEMICOLON@31..33 ";" [] [Whitespace(" ")],
-                update: JsPostUpdateExpression {
+                SEMICOLON@31..33 ";" [] [Whitespace(" ")],
+                JsPostUpdateExpression {
                     operand: JsIdentifierAssignment {
                         name_token: IDENT@33..34 "i" [] [],
                     },
                     operator: PLUS2@34..37 "++" [] [Whitespace(" ")],
                 },
-                r_paren_token: missing (required),
-                body: JsBlockStatement {
+                JsBlockStatement {
                     l_curly_token: L_CURLY@37..38 "{" [] [],
                     statements: JsStatementList [],
                     r_curly_token: R_CURLY@38..39 "}" [] [],
                 },
-            },
+            ],
         },
-        JsForStatement {
-            for_token: FOR_KW@39..44 "for" [Whitespace("\n")] [Whitespace(" ")],
-            l_paren_token: missing (required),
-            initializer: JsVariableDeclarations {
-                kind: LET_KW@44..48 "let" [] [Whitespace(" ")],
-                items: JsVariableDeclarationList [
-                    JsVariableDeclaration {
-                        id: JsIdentifierBinding {
-                            name_token: IDENT@48..50 "i" [] [Whitespace(" ")],
-                        },
-                        excl_token: missing (optional),
-                        type_annotation: missing (optional),
-                        initializer: JsInitializerClause {
-                            eq_token: EQ@50..52 "=" [] [Whitespace(" ")],
-                            expression: JsNumberLiteralExpression {
-                                value_token: JS_NUMBER_LITERAL@52..53 "5" [] [],
+        JsUnknownStatement {
+            items: [
+                FOR_KW@39..44 "for" [Whitespace("\n")] [Whitespace(" ")],
+                JsVariableDeclarations {
+                    kind: LET_KW@44..48 "let" [] [Whitespace(" ")],
+                    items: JsVariableDeclarationList [
+                        JsVariableDeclaration {
+                            id: JsIdentifierBinding {
+                                name_token: IDENT@48..50 "i" [] [Whitespace(" ")],
+                            },
+                            excl_token: missing (optional),
+                            type_annotation: missing (optional),
+                            initializer: JsInitializerClause {
+                                eq_token: EQ@50..52 "=" [] [Whitespace(" ")],
+                                expression: JsNumberLiteralExpression {
+                                    value_token: JS_NUMBER_LITERAL@52..53 "5" [] [],
+                                },
                             },
                         },
+                    ],
+                },
+                SEMICOLON@53..55 ";" [] [Whitespace(" ")],
+                JsBinaryExpression {
+                    left: JsIdentifierExpression {
+                        name: JsReferenceIdentifier {
+                            value_token: IDENT@55..57 "i" [] [Whitespace(" ")],
+                        },
                     },
-                ],
-            },
-            first_semi_token: SEMICOLON@53..55 ";" [] [Whitespace(" ")],
-            test: JsBinaryExpression {
-                left: JsIdentifierExpression {
-                    name: JsReferenceIdentifier {
-                        value_token: IDENT@55..57 "i" [] [Whitespace(" ")],
+                    operator: L_ANGLE@57..59 "<" [] [Whitespace(" ")],
+                    right: JsNumberLiteralExpression {
+                        value_token: JS_NUMBER_LITERAL@59..61 "10" [] [],
                     },
                 },
-                operator: L_ANGLE@57..59 "<" [] [Whitespace(" ")],
-                right: JsNumberLiteralExpression {
-                    value_token: JS_NUMBER_LITERAL@59..61 "10" [] [],
+                SEMICOLON@61..63 ";" [] [Whitespace(" ")],
+                JsPreUpdateExpression {
+                    operator: PLUS2@63..65 "++" [] [],
+                    operand: JsIdentifierAssignment {
+                        name_token: IDENT@65..67 "i" [] [Whitespace(" ")],
+                    },
                 },
-            },
-            second_semi_token: SEMICOLON@61..63 ";" [] [Whitespace(" ")],
-            update: JsPreUpdateExpression {
-                operator: PLUS2@63..65 "++" [] [],
-                operand: JsIdentifierAssignment {
-                    name_token: IDENT@65..67 "i" [] [Whitespace(" ")],
+                JsBlockStatement {
+                    l_curly_token: L_CURLY@67..68 "{" [] [],
+                    statements: JsStatementList [],
+                    r_curly_token: R_CURLY@68..69 "}" [] [],
                 },
-            },
-            r_paren_token: missing (required),
-            body: JsBlockStatement {
-                l_curly_token: L_CURLY@67..68 "{" [] [],
-                statements: JsStatementList [],
-                r_curly_token: R_CURLY@68..69 "}" [] [],
-            },
+            ],
         },
-        JsForInStatement {
-            for_token: FOR_KW@69..74 "for" [Whitespace("\n")] [Whitespace(" ")],
-            l_paren_token: L_PAREN@74..75 "(" [] [],
-            initializer: missing (required),
-            in_token: IN_KW@75..78 "in" [] [Whitespace(" ")],
-            expression: JsArrayExpression {
-                l_brack_token: L_BRACK@78..79 "[" [] [],
-                elements: JsArrayElementList [],
-                r_brack_token: R_BRACK@79..80 "]" [] [],
-            },
-            r_paren_token: R_PAREN@80..82 ")" [] [Whitespace(" ")],
-            body: JsBlockStatement {
-                l_curly_token: L_CURLY@82..83 "{" [] [],
-                statements: JsStatementList [],
-                r_curly_token: R_CURLY@83..84 "}" [] [],
-            },
+        JsUnknownStatement {
+            items: [
+                FOR_KW@69..74 "for" [Whitespace("\n")] [Whitespace(" ")],
+                L_PAREN@74..75 "(" [] [],
+                IN_KW@75..78 "in" [] [Whitespace(" ")],
+                JsArrayExpression {
+                    l_brack_token: L_BRACK@78..79 "[" [] [],
+                    elements: JsArrayElementList [],
+                    r_brack_token: R_BRACK@79..80 "]" [] [],
+                },
+                R_PAREN@80..82 ")" [] [Whitespace(" ")],
+                JsBlockStatement {
+                    l_curly_token: L_CURLY@82..83 "{" [] [],
+                    statements: JsStatementList [],
+                    r_curly_token: R_CURLY@83..84 "}" [] [],
+                },
+            ],
         },
         JsUnknownStatement {
             items: [
@@ -293,55 +292,48 @@ JsModule {
   0: (empty)
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_MODULE_ITEM_LIST@0..196
-    0: JS_FOR_STATEMENT@0..39
+    0: JS_UNKNOWN_STATEMENT@0..9
       0: FOR_KW@0..4 "for" [] [Whitespace(" ")]
-      1: (empty)
-      2: (empty)
-      3: SEMICOLON@4..5 ";" [] []
-      4: (empty)
-      5: SEMICOLON@5..7 ";" [] [Whitespace(" ")]
-      6: JS_OBJECT_EXPRESSION@7..9
+      1: SEMICOLON@4..5 ";" [] []
+      2: SEMICOLON@5..7 ";" [] [Whitespace(" ")]
+      3: JS_BLOCK_STATEMENT@7..9
         0: L_CURLY@7..8 "{" [] []
-        1: JS_OBJECT_MEMBER_LIST@8..8
+        1: JS_STATEMENT_LIST@8..8
         2: R_CURLY@8..9 "}" [] []
-      7: (empty)
-      8: JS_FOR_STATEMENT@9..39
-        0: FOR_KW@9..14 "for" [Whitespace("\n")] [Whitespace(" ")]
-        1: (empty)
-        2: JS_VARIABLE_DECLARATIONS@14..23
-          0: LET_KW@14..18 "let" [] [Whitespace(" ")]
-          1: JS_VARIABLE_DECLARATION_LIST@18..23
-            0: JS_VARIABLE_DECLARATION@18..23
-              0: JS_IDENTIFIER_BINDING@18..20
-                0: IDENT@18..20 "i" [] [Whitespace(" ")]
-              1: (empty)
-              2: (empty)
-              3: JS_INITIALIZER_CLAUSE@20..23
-                0: EQ@20..22 "=" [] [Whitespace(" ")]
-                1: JS_NUMBER_LITERAL_EXPRESSION@22..23
-                  0: JS_NUMBER_LITERAL@22..23 "5" [] []
-        3: SEMICOLON@23..25 ";" [] [Whitespace(" ")]
-        4: JS_BINARY_EXPRESSION@25..31
-          0: JS_IDENTIFIER_EXPRESSION@25..27
-            0: JS_REFERENCE_IDENTIFIER@25..27
-              0: IDENT@25..27 "i" [] [Whitespace(" ")]
-          1: L_ANGLE@27..29 "<" [] [Whitespace(" ")]
-          2: JS_NUMBER_LITERAL_EXPRESSION@29..31
-            0: JS_NUMBER_LITERAL@29..31 "10" [] []
-        5: SEMICOLON@31..33 ";" [] [Whitespace(" ")]
-        6: JS_POST_UPDATE_EXPRESSION@33..37
-          0: JS_IDENTIFIER_ASSIGNMENT@33..34
-            0: IDENT@33..34 "i" [] []
-          1: PLUS2@34..37 "++" [] [Whitespace(" ")]
-        7: (empty)
-        8: JS_BLOCK_STATEMENT@37..39
-          0: L_CURLY@37..38 "{" [] []
-          1: JS_STATEMENT_LIST@38..38
-          2: R_CURLY@38..39 "}" [] []
-    1: JS_FOR_STATEMENT@39..69
+    1: JS_UNKNOWN_STATEMENT@9..39
+      0: FOR_KW@9..14 "for" [Whitespace("\n")] [Whitespace(" ")]
+      1: JS_VARIABLE_DECLARATIONS@14..23
+        0: LET_KW@14..18 "let" [] [Whitespace(" ")]
+        1: JS_VARIABLE_DECLARATION_LIST@18..23
+          0: JS_VARIABLE_DECLARATION@18..23
+            0: JS_IDENTIFIER_BINDING@18..20
+              0: IDENT@18..20 "i" [] [Whitespace(" ")]
+            1: (empty)
+            2: (empty)
+            3: JS_INITIALIZER_CLAUSE@20..23
+              0: EQ@20..22 "=" [] [Whitespace(" ")]
+              1: JS_NUMBER_LITERAL_EXPRESSION@22..23
+                0: JS_NUMBER_LITERAL@22..23 "5" [] []
+      2: SEMICOLON@23..25 ";" [] [Whitespace(" ")]
+      3: JS_BINARY_EXPRESSION@25..31
+        0: JS_IDENTIFIER_EXPRESSION@25..27
+          0: JS_REFERENCE_IDENTIFIER@25..27
+            0: IDENT@25..27 "i" [] [Whitespace(" ")]
+        1: L_ANGLE@27..29 "<" [] [Whitespace(" ")]
+        2: JS_NUMBER_LITERAL_EXPRESSION@29..31
+          0: JS_NUMBER_LITERAL@29..31 "10" [] []
+      4: SEMICOLON@31..33 ";" [] [Whitespace(" ")]
+      5: JS_POST_UPDATE_EXPRESSION@33..37
+        0: JS_IDENTIFIER_ASSIGNMENT@33..34
+          0: IDENT@33..34 "i" [] []
+        1: PLUS2@34..37 "++" [] [Whitespace(" ")]
+      6: JS_BLOCK_STATEMENT@37..39
+        0: L_CURLY@37..38 "{" [] []
+        1: JS_STATEMENT_LIST@38..38
+        2: R_CURLY@38..39 "}" [] []
+    2: JS_UNKNOWN_STATEMENT@39..69
       0: FOR_KW@39..44 "for" [Whitespace("\n")] [Whitespace(" ")]
-      1: (empty)
-      2: JS_VARIABLE_DECLARATIONS@44..53
+      1: JS_VARIABLE_DECLARATIONS@44..53
         0: LET_KW@44..48 "let" [] [Whitespace(" ")]
         1: JS_VARIABLE_DECLARATION_LIST@48..53
           0: JS_VARIABLE_DECLARATION@48..53
@@ -353,39 +345,37 @@ JsModule {
               0: EQ@50..52 "=" [] [Whitespace(" ")]
               1: JS_NUMBER_LITERAL_EXPRESSION@52..53
                 0: JS_NUMBER_LITERAL@52..53 "5" [] []
-      3: SEMICOLON@53..55 ";" [] [Whitespace(" ")]
-      4: JS_BINARY_EXPRESSION@55..61
+      2: SEMICOLON@53..55 ";" [] [Whitespace(" ")]
+      3: JS_BINARY_EXPRESSION@55..61
         0: JS_IDENTIFIER_EXPRESSION@55..57
           0: JS_REFERENCE_IDENTIFIER@55..57
             0: IDENT@55..57 "i" [] [Whitespace(" ")]
         1: L_ANGLE@57..59 "<" [] [Whitespace(" ")]
         2: JS_NUMBER_LITERAL_EXPRESSION@59..61
           0: JS_NUMBER_LITERAL@59..61 "10" [] []
-      5: SEMICOLON@61..63 ";" [] [Whitespace(" ")]
-      6: JS_PRE_UPDATE_EXPRESSION@63..67
+      4: SEMICOLON@61..63 ";" [] [Whitespace(" ")]
+      5: JS_PRE_UPDATE_EXPRESSION@63..67
         0: PLUS2@63..65 "++" [] []
         1: JS_IDENTIFIER_ASSIGNMENT@65..67
           0: IDENT@65..67 "i" [] [Whitespace(" ")]
-      7: (empty)
-      8: JS_BLOCK_STATEMENT@67..69
+      6: JS_BLOCK_STATEMENT@67..69
         0: L_CURLY@67..68 "{" [] []
         1: JS_STATEMENT_LIST@68..68
         2: R_CURLY@68..69 "}" [] []
-    2: JS_FOR_IN_STATEMENT@69..84
+    3: JS_UNKNOWN_STATEMENT@69..84
       0: FOR_KW@69..74 "for" [Whitespace("\n")] [Whitespace(" ")]
       1: L_PAREN@74..75 "(" [] []
-      2: (empty)
-      3: IN_KW@75..78 "in" [] [Whitespace(" ")]
-      4: JS_ARRAY_EXPRESSION@78..80
+      2: IN_KW@75..78 "in" [] [Whitespace(" ")]
+      3: JS_ARRAY_EXPRESSION@78..80
         0: L_BRACK@78..79 "[" [] []
         1: JS_ARRAY_ELEMENT_LIST@79..79
         2: R_BRACK@79..80 "]" [] []
-      5: R_PAREN@80..82 ")" [] [Whitespace(" ")]
-      6: JS_BLOCK_STATEMENT@82..84
+      4: R_PAREN@80..82 ")" [] [Whitespace(" ")]
+      5: JS_BLOCK_STATEMENT@82..84
         0: L_CURLY@82..83 "{" [] []
         1: JS_STATEMENT_LIST@83..83
         2: R_CURLY@83..84 "}" [] []
-    3: JS_UNKNOWN_STATEMENT@84..112
+    4: JS_UNKNOWN_STATEMENT@84..112
       0: FOR_KW@84..89 "for" [Whitespace("\n")] [Whitespace(" ")]
       1: L_PAREN@89..90 "(" [] []
       2: JS_UNKNOWN@90..103
@@ -416,7 +406,7 @@ JsModule {
         0: L_CURLY@110..111 "{" [] []
         1: JS_STATEMENT_LIST@111..111
         2: R_CURLY@111..112 "}" [] []
-    4: JS_UNKNOWN_STATEMENT@112..139
+    5: JS_UNKNOWN_STATEMENT@112..139
       0: FOR_KW@112..117 "for" [Whitespace("\n")] [Whitespace(" ")]
       1: AWAIT_KW@117..123 "await" [] [Whitespace(" ")]
       2: L_PAREN@123..124 "(" [] []
@@ -438,7 +428,7 @@ JsModule {
         0: L_CURLY@137..138 "{" [] []
         1: JS_STATEMENT_LIST@138..138
         2: R_CURLY@138..139 "}" [] []
-    5: JS_UNKNOWN_STATEMENT@139..177
+    6: JS_UNKNOWN_STATEMENT@139..177
       0: FOR_KW@139..144 "for" [Whitespace("\n")] [Whitespace(" ")]
       1: AWAIT_KW@144..150 "await" [] [Whitespace(" ")]
       2: L_PAREN@150..151 "(" [] []
@@ -472,7 +462,7 @@ JsModule {
         0: L_CURLY@175..176 "{" [] []
         1: JS_STATEMENT_LIST@176..176
         2: R_CURLY@176..177 "}" [] []
-    6: JS_FOR_STATEMENT@177..196
+    7: JS_FOR_STATEMENT@177..196
       0: FOR_KW@177..182 "for" [Whitespace("\n")] [Whitespace(" ")]
       1: L_PAREN@182..183 "(" [] []
       2: JS_VARIABLE_DECLARATIONS@183..190
@@ -506,11 +496,11 @@ error[SyntaxError]: expected `'('` but instead found `;`
   │     ^ unexpected
 
 --
-error[SyntaxError]: expected `')'` but instead found `for`
-  ┌─ for_stmt_err.js:2:1
+error[SyntaxError]: expected an expression but instead found '{'
+  ┌─ for_stmt_err.js:1:8
   │
-2 │ for let i = 5; i < 10; i++ {}
-  │ ^^^ unexpected
+1 │ for ;; {}
+  │        ^ Expected an expression here
 
 --
 error[SyntaxError]: expected `'('` but instead found `let`

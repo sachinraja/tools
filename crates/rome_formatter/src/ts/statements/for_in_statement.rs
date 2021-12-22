@@ -7,13 +7,13 @@ use crate::{
 
 impl ToFormatElement for JsForInStatement {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		let for_token = formatter.format_token(&self.for_token()?)?;
-		let l_paren = formatter.format_token(&self.l_paren_token()?)?;
-		let initializer = formatter.format_node(self.initializer()?)?;
-		let in_token = formatter.format_token(&self.in_token()?)?;
-		let expression = formatter.format_node(self.expression()?)?;
-		let r_paren = formatter.format_token(&self.r_paren_token()?)?;
-		let body = formatter.format_node(self.body()?)?;
+		let for_token = formatter.format_token(&self.for_token())?;
+		let l_paren = formatter.format_token(&self.l_paren_token())?;
+		let initializer = formatter.format_node(self.initializer())?;
+		let in_token = formatter.format_token(&self.in_token())?;
+		let expression = formatter.format_node(self.expression())?;
+		let r_paren = formatter.format_token(&self.r_paren_token())?;
+		let body = formatter.format_node(self.body())?;
 
 		Ok(format_elements![
 			for_token,
@@ -49,9 +49,9 @@ impl ToFormatElement for JsAnyForInOrOfInitializer {
 impl ToFormatElement for JsForVariableDeclaration {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.kind_token()?)?,
+			formatter.format_token(&self.kind_token())?,
 			space_token(),
-			formatter.format_node(self.declaration()?)?
+			formatter.format_node(self.declaration())?
 		])
 	}
 }

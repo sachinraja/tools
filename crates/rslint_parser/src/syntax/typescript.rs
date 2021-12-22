@@ -8,7 +8,7 @@ use super::stmt::{parse_statements, semi, variable_declaration_statement};
 use crate::parser::ParserProgress;
 #[allow(deprecated)]
 use crate::parser::SingleTokenParseRecovery;
-use crate::syntax::binding::parse_binding;
+use crate::syntax::binding::parse_identifier_binding;
 use crate::syntax::class::parse_class_declaration;
 use crate::syntax::expr::parse_any_name;
 use crate::syntax::function::parse_function_declaration;
@@ -535,7 +535,7 @@ pub(crate) fn try_parse_index_signature(
 		return Err(m);
 	}
 
-	let pat_m = parse_binding(p).unwrap().undo_completion(p);
+	let pat_m = parse_identifier_binding(p).unwrap().undo_completion(p);
 
 	if p.expect_no_recover(T![:]).is_none() {
 		return Err(m);

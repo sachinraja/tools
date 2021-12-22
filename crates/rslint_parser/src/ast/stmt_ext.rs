@@ -12,28 +12,28 @@ pub enum JsVariableKind {
 impl JsVariableDeclarations {
 	/// Whether the declaration is a const declaration
 	pub fn is_const(&self) -> bool {
-		self.variable_kind() == Ok(JsVariableKind::Const)
+		self.variable_kind() == JsVariableKind::Const
 	}
 
 	/// Whether the declaration is a let declaration
 	pub fn is_let(&self) -> bool {
-		self.variable_kind() == Ok(JsVariableKind::Let)
+		self.variable_kind() == JsVariableKind::Let
 	}
 
 	/// Whether the declaration is a let declaration
 	pub fn is_var(&self) -> bool {
-		self.variable_kind() == Ok(JsVariableKind::Const)
+		self.variable_kind() == JsVariableKind::Const
 	}
 
-	pub fn variable_kind(&self) -> SyntaxResult<JsVariableKind> {
-		let token_kind = self.kind().map(|t| t.kind())?;
+	pub fn variable_kind(&self) -> JsVariableKind {
+		let token_kind = self.kind().kind();
 
-		Ok(match token_kind {
+		match token_kind {
 			T![const] => JsVariableKind::Const,
 			T![let] => JsVariableKind::Let,
 			T![var] => JsVariableKind::Var,
 			_ => unreachable!(),
-		})
+		}
 	}
 }
 

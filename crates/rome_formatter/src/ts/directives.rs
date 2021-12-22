@@ -29,7 +29,7 @@ impl ToFormatElement for JsDirective {
 		};
 
 		Ok(format_elements![
-			formatter.format_token(&self.value_token()?)?,
+			formatter.format_token(&self.value_token())?,
 			semicolon,
 		])
 	}

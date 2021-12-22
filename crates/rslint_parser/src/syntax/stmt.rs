@@ -16,7 +16,7 @@ use crate::syntax::expr::{
 };
 use crate::syntax::function::{is_at_async_function, parse_function_declaration, LineBreak};
 use crate::syntax::js_parse_error;
-use crate::syntax::js_parse_error::{expected_binding, expected_statement};
+use crate::syntax::js_parse_error::{expected_binding_pattern, expected_statement};
 use crate::syntax::module::parse_import;
 use crate::JsSyntaxFeature::StrictMode;
 use crate::ParsedSyntax::{Absent, Present};
@@ -651,8 +651,15 @@ pub(crate) fn parse_statements(p: &mut Parser, stop_on_r_curly: bool) {
 /// An expression wrapped in parentheses such as `()`
 pub fn parenthesized_expression(p: &mut Parser) {
 	p.state.allow_object_expr = p.expect(T!['(']);
-	parse_expression(p).or_add_diagnostic(p, js_parse_error::expected_expression);
-	p.expect(T![')']);
+
+	let valid_expr = parse_expression(p)
+		.or_add_diagnostic(p, js_parse_error::expected_expression)
+		.is_some();
+
+	if !p.expect(T![')']) && valid_expr {
+		p.synthesize_token(T![')']);
+	}
+
 	p.state.allow_object_expr = true;
 }
 
@@ -882,7 +889,7 @@ impl ParseSeparatedList for ParseVariableDeclarations {
 			p,
 			&ParseRecovery::new(JS_UNKNOWN, STMT_RECOVERY_SET.union(token_set!(T![,])))
 				.enable_recovery_on_line_break(),
-			expected_binding,
+			expected_binding_pattern,
 		)
 	}
 
@@ -1206,9 +1213,14 @@ pub fn parse_for_statement(p: &mut Parser) -> ParsedSyntax {
 		p.bump_any();
 	}
 
-	p.expect(T!['(']);
+	if !p.expect(T!['(']) {
+		p.state.allow_object_expr = false;
+	}
+
 	let kind = parse_for_head(p);
 	p.expect(T![')']);
+
+	p.state.allow_object_expr = true;
 
 	{
 		let guard = &mut *p.with_state(ParserState {
@@ -1441,7 +1453,7 @@ fn parse_catch_declaration(p: &mut Parser) -> ParsedSyntax {
 
 	p.bump_any(); // bump (
 
-	let pattern_marker = parse_binding_pattern(p).or_add_diagnostic(p, expected_binding);
+	let pattern_marker = parse_binding_pattern(p).or_add_diagnostic(p, expected_binding_pattern);
 	let pattern_kind = pattern_marker.map(|x| x.kind());
 
 	if p.at(T![:]) {

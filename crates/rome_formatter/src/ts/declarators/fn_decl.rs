@@ -12,17 +12,17 @@ impl ToFormatElement for JsFunctionDeclaration {
 			tokens.push(space_token());
 		}
 
-		tokens.push(formatter.format_token(&self.function_token()?)?);
+		tokens.push(formatter.format_token(&self.function_token())?);
 
 		if let Some(token) = self.star_token() {
 			tokens.push(formatter.format_token(&token)?);
 		}
 
 		tokens.push(space_token());
-		tokens.push(formatter.format_node(self.id()?)?);
-		tokens.push(formatter.format_node(self.parameters()?)?);
+		tokens.push(formatter.format_node(self.id())?);
+		tokens.push(formatter.format_node(self.parameters())?);
 		tokens.push(space_token());
-		tokens.push(formatter.format_node(self.body()?)?);
+		tokens.push(formatter.format_node(self.body())?);
 
 		Ok(concat_elements(tokens))
 	}

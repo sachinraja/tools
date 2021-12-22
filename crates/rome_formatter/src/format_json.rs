@@ -28,41 +28,35 @@ fn tokenize_token(syntax_token: SyntaxToken) -> FormatElement {
 fn tokenize_node(node: SyntaxNode) -> FormatElement {
 	match node.kind() {
 		JsSyntaxKind::JS_LITERAL_MEMBER_NAME => {
-			tokenize_token(node.to::<JsLiteralMemberName>().value().unwrap())
+			tokenize_token(node.to::<JsLiteralMemberName>().value())
 		}
-		JsSyntaxKind::JS_STRING_LITERAL_EXPRESSION => tokenize_token(
-			node.to::<JsStringLiteralExpression>()
-				.value_token()
-				.unwrap(),
-		),
-		JsSyntaxKind::JS_BOOLEAN_LITERAL_EXPRESSION => tokenize_token(
-			node.to::<JsBooleanLiteralExpression>()
-				.value_token()
-				.unwrap(),
-		),
+		JsSyntaxKind::JS_STRING_LITERAL_EXPRESSION => {
+			tokenize_token(node.to::<JsStringLiteralExpression>().value_token())
+		}
+		JsSyntaxKind::JS_BOOLEAN_LITERAL_EXPRESSION => {
+			tokenize_token(node.to::<JsBooleanLiteralExpression>().value_token())
+		}
 		JsSyntaxKind::JS_NULL_LITERAL_EXPRESSION => {
-			tokenize_token(node.to::<JsNullLiteralExpression>().value_token().unwrap())
+			tokenize_token(node.to::<JsNullLiteralExpression>().value_token())
 		}
-		JsSyntaxKind::JS_NUMBER_LITERAL_EXPRESSION => tokenize_token(
-			node.to::<JsNumberLiteralExpression>()
-				.value_token()
-				.unwrap(),
-		),
+		JsSyntaxKind::JS_NUMBER_LITERAL_EXPRESSION => {
+			tokenize_token(node.to::<JsNumberLiteralExpression>().value_token())
+		}
 		JsSyntaxKind::JS_UNARY_EXPRESSION => {
 			let expr = JsUnaryExpression::cast(node).unwrap();
 			format_elements![
-				tokenize_token(expr.operator().unwrap()),
-				tokenize_node(expr.argument().unwrap().syntax().clone())
+				tokenize_token(expr.operator()),
+				tokenize_node(expr.argument().syntax().clone())
 			]
 		}
 
 		JsSyntaxKind::JS_PROPERTY_OBJECT_MEMBER => {
 			let prop = JsPropertyObjectMember::cast(node).unwrap();
 			format_elements![
-				tokenize_node(prop.name().unwrap().syntax().clone()),
+				tokenize_node(prop.name().syntax().clone()),
 				token(":"),
 				space_token(),
-				tokenize_node(prop.value().unwrap().syntax().clone()),
+				tokenize_node(prop.value().syntax().clone()),
 			]
 		}
 
@@ -74,7 +68,6 @@ fn tokenize_node(node: SyntaxNode) -> FormatElement {
 			let properties_list: Vec<FormatElement> = object
 				.members()
 				.iter()
-				.flatten()
 				.map(|prop| match prop {
 					JsAnyObjectMember::JsPropertyObjectMember(prop) => {
 						format_elements![tokenize_node(prop.syntax().clone())]
@@ -101,7 +94,6 @@ fn tokenize_node(node: SyntaxNode) -> FormatElement {
 				array
 					.elements()
 					.iter()
-					.flatten()
 					.map(|element| tokenize_node(element.syntax().clone())),
 			);
 
@@ -127,7 +119,7 @@ pub fn tokenize_json(content: &str) -> FormatElement {
 			.unwrap(),
 	)
 	// TODO: #1725 this should be reviewed for error handling
-	.and_then(|grouping| grouping.expression().ok())
+	.map(|grouping| grouping.expression())
 	.unwrap();
 
 	let tokenized_content = tokenize_node(json_content.syntax().clone());

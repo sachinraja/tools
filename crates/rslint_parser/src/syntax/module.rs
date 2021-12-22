@@ -1,10 +1,10 @@
 use crate::parser::{expected_any, expected_node, ParserProgress, RecoveryResult, ToDiagnostic};
-use crate::syntax::binding::parse_binding;
+use crate::syntax::binding::parse_identifier_binding;
 use crate::syntax::js_parse_error::{
-	duplicate_assertion_keys_error, expected_binding, expected_export_name,
-	expected_export_name_after_as_keyword, expected_local_name_for_default_import,
-	expected_module_source, expected_named_import, expected_named_import_specifier,
-	expected_statement,
+	duplicate_assertion_keys_error, expected_binding_pattern, expected_export_name,
+	expected_export_name_after_as_keyword, expected_identifier,
+	expected_local_name_for_default_import, expected_module_source, expected_named_import,
+	expected_named_import_specifier, expected_statement,
 };
 use crate::syntax::program::export_decl;
 use crate::syntax::stmt::{parse_statement, semi, STMT_RECOVERY_SET};
@@ -109,7 +109,7 @@ fn parse_import_clause(p: &mut Parser) -> ParsedSyntax {
 		JS_STRING_LITERAL => parse_import_bare_clause(p),
 		T![*] => parse_import_namespace_clause(p),
 		T!['{'] => parse_import_named_clause(p),
-		_ => match parse_binding(p) {
+		_ => match parse_identifier_binding(p) {
 			Absent => Absent,
 			Present(binding) => {
 				let m = binding.precede(p);
@@ -160,7 +160,7 @@ fn parse_import_namespace_clause(p: &mut Parser) -> ParsedSyntax {
 
 	p.bump_any();
 	expect_keyword(p, "as", T![as]);
-	parse_binding(p).or_add_diagnostic(p, expected_binding);
+	parse_identifier_binding(p).or_add_diagnostic(p, expected_binding_pattern);
 	expect_keyword(p, "from", T![from]);
 	parse_module_source(p).or_add_diagnostic(p, expected_module_source);
 	parse_import_assertion(p).ok();
@@ -191,7 +191,7 @@ fn parse_import_named_clause(p: &mut Parser) -> ParsedSyntax {
 }
 
 fn parse_default_import_specifier(p: &mut Parser) -> ParsedSyntax {
-	parse_binding(p).map(|binding| {
+	parse_identifier_binding(p).map(|binding| {
 		let m = binding.precede(p);
 		p.expect(T![,]);
 		m.complete(p, JS_DEFAULT_IMPORT_SPECIFIER)
@@ -213,7 +213,7 @@ fn parse_namespace_import_specifier(p: &mut Parser) -> ParsedSyntax {
 	let m = p.start();
 	p.bump_any();
 	expect_keyword(p, "as", T![as]);
-	parse_binding(p).or_add_diagnostic(p, expected_binding);
+	parse_identifier_binding(p).or_add_diagnostic(p, expected_identifier);
 
 	Present(m.complete(p, JS_NAMESPACE_IMPORT_SPECIFIER))
 }
@@ -280,7 +280,7 @@ fn parse_named_import_specifier(p: &mut Parser) -> ParsedSyntax {
 	}
 
 	expect_keyword(p, "as", T![as]);
-	parse_binding(p).or_add_diagnostic(p, expected_binding);
+	parse_identifier_binding(p).or_add_diagnostic(p, expected_identifier);
 
 	Present(m.complete(p, JS_NAMED_IMPORT_SPECIFIER))
 }
@@ -292,11 +292,11 @@ fn parse_shorthand_named_import_specifier(p: &mut Parser) -> ParsedSyntax {
 		let shorthand = p.start();
 		let binding = p.start();
 		p.bump_any();
-		binding.complete(p, JS_UNKNOWN_BINDING);
+		binding.complete(p, JS_UNKNOWN_BINDING_PATTERN);
 		return Present(shorthand.complete(p, JS_SHORTHAND_NAMED_IMPORT_SPECIFIER));
 	}
 
-	parse_binding(p).map(|binding| {
+	parse_identifier_binding(p).map(|binding| {
 		binding
 			.precede(p)
 			.complete(p, JS_SHORTHAND_NAMED_IMPORT_SPECIFIER)

@@ -9,21 +9,21 @@ use rslint_parser::ast::{JsAnySwitchClause, JsCaseClause, JsDefaultClause, JsSwi
 impl ToFormatElement for JsSwitchStatement {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.switch_token()?)?,
+			formatter.format_token(&self.switch_token())?,
 			space_token(),
 			group_elements(format_elements![
-				formatter.format_token(&self.l_paren_token()?)?,
-				soft_indent(formatter.format_node(self.discriminant()?)?),
-				formatter.format_token(&self.r_paren_token()?)?
+				formatter.format_token(&self.l_paren_token())?,
+				soft_indent(formatter.format_node(self.discriminant())?),
+				formatter.format_token(&self.r_paren_token())?
 			]),
 			space_token(),
 			group_elements(format_elements![
-				formatter.format_token(&self.l_curly_token()?)?,
+				formatter.format_token(&self.l_curly_token())?,
 				block_indent(join_elements(
 					hard_line_break(),
 					formatter.format_nodes(self.cases())?
 				)),
-				formatter.format_token(&self.r_curly_token()?)?
+				formatter.format_token(&self.r_curly_token())?
 			])
 		])
 	}
@@ -44,8 +44,8 @@ impl ToFormatElement for JsAnySwitchClause {
 
 impl ToFormatElement for JsDefaultClause {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		let default = formatter.format_token(&self.default_token()?)?;
-		let colon = formatter.format_token(&self.colon_token()?)?;
+		let default = formatter.format_token(&self.default_token())?;
+		let colon = formatter.format_token(&self.colon_token())?;
 		let statements = format_statements(self.consequent(), formatter);
 
 		Ok(format_elements![
@@ -60,10 +60,10 @@ impl ToFormatElement for JsDefaultClause {
 
 impl ToFormatElement for JsCaseClause {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		let case_word = formatter.format_token(&self.case_token()?)?;
-		let colon = formatter.format_token(&self.colon_token()?)?;
+		let case_word = formatter.format_token(&self.case_token())?;
+		let colon = formatter.format_token(&self.colon_token())?;
 
-		let test = formatter.format_node(self.test()?)?;
+		let test = formatter.format_node(self.test())?;
 
 		let cons = format_statements(self.consequent(), formatter);
 

@@ -1,5 +1,5 @@
 use crate::parser::{ParsedSyntax, ParserProgress, RecoveryResult};
-use crate::syntax::binding::parse_binding;
+use crate::syntax::binding::parse_identifier_binding;
 use crate::syntax::decl::{parse_formal_param_pat, parse_parameter_list, parse_parameters_list};
 use crate::syntax::expr::parse_expr_or_assignment;
 use crate::syntax::function::{
@@ -90,7 +90,7 @@ fn parse_class(p: &mut Parser, kind: ClassKind) -> ParsedSyntax {
 	let id = if guard.cur_src() == "implements" {
 		Absent
 	} else {
-		parse_binding(&mut *guard)
+		parse_identifier_binding(&mut *guard)
 	};
 
 	// parse class id

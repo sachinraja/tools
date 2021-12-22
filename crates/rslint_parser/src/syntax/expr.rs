@@ -14,12 +14,12 @@ use crate::syntax::assignment::{
 	expression_to_assignment, expression_to_assignment_pattern, parse_assignment,
 	AssignmentExprPrecedence,
 };
-use crate::syntax::binding::{parse_binding, parse_identifier_binding};
+use crate::syntax::binding::parse_identifier_binding;
 use crate::syntax::class::parse_class_expression;
 use crate::syntax::function::parse_function_expression;
 use crate::syntax::js_parse_error;
 use crate::syntax::js_parse_error::{
-	expected_binding, expected_expression, expected_identifier, expected_parameter,
+	expected_binding_pattern, expected_expression, expected_identifier, expected_parameter,
 	expected_simple_assignment_target,
 };
 use crate::syntax::object::parse_object_expression;
@@ -235,8 +235,10 @@ fn yield_expr(p: &mut Parser) -> CompletedMarker {
 	p.expect(T![yield]);
 
 	if !is_semi(p, 0) && (p.at(T![*]) || p.at_ts(STARTS_EXPR)) {
+		let argument = p.start();
 		p.eat(T![*]);
-		parse_expr_or_assignment(p).ok();
+		parse_expr_or_assignment(p).or_add_diagnostic(p, expected_expression);
+		argument.complete(p, JS_YIELD_ARGUMENT);
 	}
 
 	m.complete(p, JS_YIELD_EXPRESSION)
@@ -781,7 +783,8 @@ fn parse_paren_or_arrow_expr(p: &mut Parser, can_be_arrow: bool) -> ParsedSyntax
 			if temp.at(T![...]) {
 				let m = temp.start();
 				temp.bump_any();
-				parse_binding_pattern(&mut *temp).or_add_diagnostic(&mut *temp, expected_binding);
+				parse_binding_pattern(&mut *temp)
+					.or_add_diagnostic(&mut *temp, expected_binding_pattern);
 				if temp.eat(T![:]) {
 					if let Some(mut ty) = ts_type(&mut *temp) {
 						ty.err_if_not_ts(
@@ -1010,7 +1013,7 @@ fn parse_primary_expression(p: &mut Parser) -> ParsedSyntax {
 						if parsed_parameters.is_absent() {
 							// test_err async_arrow_expr_await_parameter
 							// let a = async await => {}
-							parse_binding(in_async_p)
+							parse_identifier_binding(in_async_p)
 								.or_add_diagnostic(in_async_p, expected_parameter);
 						}
 

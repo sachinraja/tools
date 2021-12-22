@@ -18,9 +18,9 @@ impl ToFormatElement for JsBlockStatement {
 		};
 
 		Ok(format_elements![
-			formatter.format_token(&self.l_curly_token()?)?,
+			formatter.format_token(&self.l_curly_token())?,
 			body,
-			formatter.format_token(&self.r_curly_token()?)?
+			formatter.format_token(&self.r_curly_token())?
 		])
 	}
 }

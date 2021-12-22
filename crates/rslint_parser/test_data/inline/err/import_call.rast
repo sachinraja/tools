@@ -3,11 +3,12 @@ JsModule {
     directives: JsDirectiveList [],
     items: JsModuleItemList [
         JsExpressionStatement {
-            expression: JsImportCallExpression {
-                import_token: IMPORT_KW@0..6 "import" [] [],
-                l_paren_token: L_PAREN@6..7 "(" [] [],
-                argument: missing (required),
-                r_paren_token: R_PAREN@7..8 ")" [] [],
+            expression: JsUnknownExpression {
+                items: [
+                    IMPORT_KW@0..6 "import" [] [],
+                    L_PAREN@6..7 "(" [] [],
+                    R_PAREN@7..8 ")" [] [],
+                ],
             },
             semicolon_token: missing (optional),
         },
@@ -20,11 +21,10 @@ JsModule {
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_MODULE_ITEM_LIST@0..8
     0: JS_EXPRESSION_STATEMENT@0..8
-      0: JS_IMPORT_CALL_EXPRESSION@0..8
+      0: JS_UNKNOWN_EXPRESSION@0..8
         0: IMPORT_KW@0..6 "import" [] []
         1: L_PAREN@6..7 "(" [] []
-        2: (empty)
-        3: R_PAREN@7..8 ")" [] []
+        2: R_PAREN@7..8 ")" [] []
       1: (empty)
   3: EOF@8..9 "" [Whitespace("\n")] []
 --

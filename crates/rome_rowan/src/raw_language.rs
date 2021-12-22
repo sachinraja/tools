@@ -34,6 +34,9 @@ pub enum RawLanguageKind {
 	LET_TOKEN = 13,
 	CONDITION = 14,
 	PLUS_TOKEN = 15,
+	YIELD_EXPRESSION = 16,
+	STAR_TOKEN = 17,
+	YIELD_TOKEN = 18,
 	__LAST,
 }
 
@@ -74,12 +77,14 @@ impl SyntaxFactory for RawLanguageSyntaxFactory {
 				RawSyntaxNode::new(kind, children.into_iter().map(Some))
 			}
 			RawLanguageKind::EXPRESSION_LIST => {
-				Self::make_node_list_syntax(kind, children, |kind| kind == LITERAL_EXPRESSION)
+				Self::make_node_list_syntax(kind, children, |kind| {
+					matches!(kind, LITERAL_EXPRESSION | RawLanguageKind::YIELD_EXPRESSION)
+				})
 			}
 			RawLanguageKind::SEPARATED_EXPRESSION_LIST => Self::make_separated_list_syntax(
 				kind,
 				children,
-				|kind| kind == LITERAL_EXPRESSION,
+				|kind| matches!(kind, LITERAL_EXPRESSION | RawLanguageKind::YIELD_EXPRESSION),
 				COMMA_TOKEN,
 				true,
 			),
@@ -93,21 +98,15 @@ impl SyntaxFactory for RawLanguageSyntaxFactory {
 				let mut elements = children.into_iter();
 				let current_element = elements.next();
 
-				if let Some(element) = &current_element {
-					if !matches!(
-						element.kind(),
+				if current_element.is_some()
+					&& matches!(
+						current_element.as_ref().unwrap().kind(),
 						RawLanguageKind::STRING_TOKEN | RawLanguageKind::NUMBER_TOKEN
 					) {
-						return RawSyntaxNode::new(
-							kind.to_unknown(),
-							std::iter::once(current_element),
-						);
-					}
+					RawSyntaxNode::new(kind, std::iter::once(current_element))
 				} else {
-					return RawSyntaxNode::new(kind, std::iter::once(None));
+					return RawSyntaxNode::new(kind.to_unknown(), std::iter::once(current_element));
 				}
-
-				RawSyntaxNode::new(kind, std::iter::once(current_element))
 			}
 
 			RawLanguageKind::CONDITION => {
@@ -121,35 +120,76 @@ impl SyntaxFactory for RawLanguageSyntaxFactory {
 				let mut current_element = elements.next();
 				let mut slots: RawNodeSlots<3> = Default::default();
 
-				if let Some(element) = &current_element {
-					if element.kind() == RawLanguageKind::L_PAREN_TOKEN {
-						slots.mark_present();
-						current_element = elements.next();
-					} else {
-						slots.mark_absent();
-					}
+				if current_element.is_some()
+					&& current_element.as_ref().unwrap().kind() == RawLanguageKind::L_PAREN_TOKEN
+				{
+					slots.mark_present();
+					current_element = elements.next();
+				} else {
+					return RawSyntaxNode::new(kind.to_unknown(), children.into_iter().map(Some));
+				}
+
+				if current_element.is_some()
+					&& current_element.as_ref().unwrap().kind()
+						== RawLanguageKind::LITERAL_EXPRESSION
+				{
+					slots.mark_present();
+					current_element = elements.next();
+				} else {
+					return RawSyntaxNode::new(kind.to_unknown(), children.into_iter().map(Some));
+				}
+
+				if current_element.is_some()
+					&& current_element.as_ref().unwrap().kind() == RawLanguageKind::R_PAREN_TOKEN
+				{
+					slots.mark_present();
+					current_element = elements.next();
 				} else {
 					slots.mark_absent();
 				}
 
-				if let Some(element) = &current_element {
-					if element.kind() == RawLanguageKind::LITERAL_EXPRESSION {
-						slots.mark_present();
-						current_element = elements.next();
-					} else {
-						slots.mark_absent();
-					}
+				if current_element.is_some() {
+					return RawSyntaxNode::new(kind.to_unknown(), children.into_iter().map(Some));
+				}
+
+				slots.into_node(kind, children)
+			}
+			RawLanguageKind::YIELD_EXPRESSION => {
+				let actual_len = children.len();
+
+				if actual_len > 3 {
+					return RawSyntaxNode::new(kind.to_unknown(), children.into_iter().map(Some));
+				}
+
+				let mut elements = (&children).into_iter();
+				let mut current_element = elements.next();
+				let mut slots: RawNodeSlots<3> = Default::default();
+
+				if current_element.is_some()
+					&& current_element.as_ref().unwrap().kind() == RawLanguageKind::YIELD_TOKEN
+				{
+					slots.mark_present();
+					current_element = elements.next();
+				} else {
+					return RawSyntaxNode::new(kind.to_unknown(), children.into_iter().map(Some));
+				}
+
+				if current_element.is_some()
+					&& current_element.as_ref().unwrap().kind() == RawLanguageKind::STAR_TOKEN
+				{
+					slots.mark_present();
+					current_element = elements.next();
 				} else {
 					slots.mark_absent();
 				}
 
-				if let Some(element) = &current_element {
-					if element.kind() == RawLanguageKind::R_PAREN_TOKEN {
-						slots.mark_present();
-						current_element = elements.next();
-					} else {
-						slots.mark_absent();
-					}
+				if current_element.is_some()
+					&& matches!(
+						current_element.as_ref().unwrap().kind(),
+						RawLanguageKind::LITERAL_EXPRESSION | RawLanguageKind::YIELD_EXPRESSION
+					) {
+					slots.mark_present();
+					current_element = elements.next();
 				} else {
 					slots.mark_absent();
 				}

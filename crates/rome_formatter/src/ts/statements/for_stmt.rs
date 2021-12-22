@@ -13,14 +13,14 @@ impl ToFormatElement for JsForStatement {
 					inner.push(formatter.format_node(init)?);
 				}
 
-				inner.push(formatter.format_token(&self.first_semi_token()?)?);
+				inner.push(formatter.format_token(&self.first_semi_token())?);
 				inner.push(soft_line_break_or_space());
 
 				if let Some(test) = self.test() {
 					inner.push(formatter.format_node(test)?);
 				}
 
-				inner.push(formatter.format_token(&self.second_semi_token()?)?);
+				inner.push(formatter.format_token(&self.second_semi_token())?);
 				inner.push(soft_line_break_or_space());
 
 				if let Some(update) = self.update() {
@@ -30,19 +30,19 @@ impl ToFormatElement for JsForStatement {
 				concat_elements(inner)
 			} else {
 				format_elements![
-					formatter.format_token(&self.first_semi_token()?)?,
-					formatter.format_token(&self.second_semi_token()?)?
+					formatter.format_token(&self.first_semi_token())?,
+					formatter.format_token(&self.second_semi_token())?
 				]
 			};
 
 		Ok(group_elements(format_elements![
-			formatter.format_token(&self.for_token()?)?,
+			formatter.format_token(&self.for_token())?,
 			space_token(),
-			formatter.format_token(&self.l_paren_token()?)?,
+			formatter.format_token(&self.l_paren_token())?,
 			group_elements(soft_indent(inner)),
-			formatter.format_token(&self.r_paren_token()?)?,
+			formatter.format_token(&self.r_paren_token())?,
 			space_token(),
-			formatter.format_node(self.body()?)?
+			formatter.format_node(self.body())?
 		]))
 	}
 }

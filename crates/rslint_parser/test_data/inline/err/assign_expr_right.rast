@@ -5,12 +5,13 @@ JsModule {
         JsExpressionStatement {
             expression: JsParenthesizedExpression {
                 l_paren_token: L_PAREN@0..1 "(" [] [],
-                expression: JsAssignmentExpression {
-                    left: JsIdentifierAssignment {
-                        name_token: IDENT@1..5 "foo" [] [Whitespace(" ")],
-                    },
-                    operator_token: EQ@5..7 "=" [] [Whitespace(" ")],
-                    right: missing (required),
+                expression: JsUnknownExpression {
+                    items: [
+                        JsIdentifierAssignment {
+                            name_token: IDENT@1..5 "foo" [] [Whitespace(" ")],
+                        },
+                        EQ@5..7 "=" [] [Whitespace(" ")],
+                    ],
                 },
                 r_paren_token: R_PAREN@7..8 ")" [] [],
             },
@@ -27,11 +28,10 @@ JsModule {
     0: JS_EXPRESSION_STATEMENT@0..9
       0: JS_PARENTHESIZED_EXPRESSION@0..8
         0: L_PAREN@0..1 "(" [] []
-        1: JS_ASSIGNMENT_EXPRESSION@1..7
+        1: JS_UNKNOWN_EXPRESSION@1..7
           0: JS_IDENTIFIER_ASSIGNMENT@1..5
             0: IDENT@1..5 "foo" [] [Whitespace(" ")]
           1: EQ@5..7 "=" [] [Whitespace(" ")]
-          2: (empty)
         2: R_PAREN@7..8 ")" [] []
       1: SEMICOLON@8..9 ";" [] []
   3: EOF@9..10 "" [Whitespace("\n")] []

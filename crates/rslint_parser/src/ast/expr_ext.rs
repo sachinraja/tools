@@ -20,7 +20,7 @@ impl JsLiteralMemberName {
 	///
 	/// let static_member_name = node.to::<JsLiteralMemberName>();
 	///
-	/// assert_eq!("abcd", static_member_name.name().unwrap());
+	/// assert_eq!("abcd", static_member_name.name());
 	/// ```
 	///
 	/// Getting the name of a static member containing a number literal
@@ -35,7 +35,7 @@ impl JsLiteralMemberName {
 	///
 	/// let static_member_name = node.to::<JsLiteralMemberName>();
 	///
-	/// assert_eq!("5", static_member_name.name().unwrap());
+	/// assert_eq!("5", static_member_name.name());
 	/// ```
 	///
 	/// Getting the name of a static member containing an identifier
@@ -50,18 +50,16 @@ impl JsLiteralMemberName {
 	///
 	/// let static_member_name = node.to::<JsLiteralMemberName>();
 	///
-	/// assert_eq!("abcd", static_member_name.name().unwrap());
+	/// assert_eq!("abcd", static_member_name.name());
 	/// ```
-	pub fn name(&self) -> SyntaxResult<String> {
-		let value = self.value()?;
+	pub fn name(&self) -> String {
+		let value = self.value();
 		let name = value.text_trimmed();
 
-		let result = match value.kind() {
+		match value.kind() {
 			JS_STRING_LITERAL => String::from(&name[1..name.len() - 1]),
 			_ => String::from(name),
-		};
-
-		Ok(result)
+		}
 	}
 }
 
@@ -115,8 +113,8 @@ pub enum JsBinaryOperation {
 }
 
 impl JsBinaryExpression {
-	pub fn operator_kind(&self) -> SyntaxResult<JsBinaryOperation> {
-		let kind = match self.operator()?.kind() {
+	pub fn operator_kind(&self) -> JsBinaryOperation {
+		match self.operator().kind() {
 			T![<] => JsBinaryOperation::LessThan,
 			T![>] => JsBinaryOperation::GreaterThan,
 			T![<=] => JsBinaryOperation::LessThanOrEqual,
@@ -140,15 +138,13 @@ impl JsBinaryExpression {
 			T![in] => JsBinaryOperation::In,
 			T![instanceof] => JsBinaryOperation::Instanceof,
 			_ => unreachable!(),
-		};
-
-		Ok(kind)
+		}
 	}
 	/// Whether this is a comparison operation, such as `>`, `<`, `==`, `!=`, `===`, etc.
 	pub fn is_comparison_operator(&self) -> bool {
 		matches!(
-			self.operator().map(|t| t.kind()),
-			Ok(T![>] | T![<] | T![>=] | T![<=] | T![==] | T![===] | T![!=] | T![!==])
+			self.operator().kind(),
+			T![>] | T![<] | T![>=] | T![<=] | T![==] | T![===] | T![!=] | T![!==]
 		)
 	}
 }
@@ -163,15 +159,13 @@ pub enum JsLogicalOperation {
 }
 
 impl JsLogicalExpression {
-	pub fn operator_kind(&self) -> SyntaxResult<JsLogicalOperation> {
-		let kind = match self.operator()?.kind() {
+	pub fn operator_kind(&self) -> JsLogicalOperation {
+		match self.operator().kind() {
 			T![&&] => JsLogicalOperation::LogicalAnd,
 			T![||] => JsLogicalOperation::LogicalOr,
 			T![??] => JsLogicalOperation::NullishCoalescing,
 			_ => unreachable!(),
-		};
-
-		Ok(kind)
+		}
 	}
 }
 
@@ -200,10 +194,8 @@ pub enum JsUnaryOperation {
 }
 
 impl JsUnaryExpression {
-	pub fn operation(&self) -> SyntaxResult<JsUnaryOperation> {
-		let operator = self.operator()?;
-
-		Ok(match operator.kind() {
+	pub fn operation(&self) -> JsUnaryOperation {
+		match self.operator().kind() {
 			T![+] => JsUnaryOperation::Plus,
 			T![-] => JsUnaryOperation::Minus,
 			T![~] => JsUnaryOperation::BitwiseNot,
@@ -212,7 +204,7 @@ impl JsUnaryExpression {
 			T![void] => JsUnaryOperation::Void,
 			T![delete] => JsUnaryOperation::Delete,
 			_ => unreachable!(),
-		})
+		}
 	}
 }
 
@@ -236,8 +228,8 @@ pub enum JsAssignmentOperator {
 }
 
 impl JsAssignmentExpression {
-	pub fn operator(&self) -> SyntaxResult<JsAssignmentOperator> {
-		let operator = match self.operator_token()?.kind() {
+	pub fn operator(&self) -> JsAssignmentOperator {
+		match self.operator_token().kind() {
 			T![=] => JsAssignmentOperator::Assign,
 			T![+=] => JsAssignmentOperator::AddAssign,
 			T![-=] => JsAssignmentOperator::SubtractAssign,
@@ -254,9 +246,7 @@ impl JsAssignmentExpression {
 			T![||=] => JsAssignmentOperator::LogicalOrAssign,
 			T![??=] => JsAssignmentOperator::NullishCoalescingAssign,
 			_ => unreachable!(),
-		};
-
-		Ok(operator)
+		}
 	}
 }
 
@@ -274,13 +264,13 @@ impl JsObjectExpression {
 
 impl JsNumberLiteralExpression {
 	pub fn as_number(&self) -> Option<f64> {
-		parse_js_number(self.value_token().unwrap().text())
+		parse_js_number(self.value_token().text())
 	}
 }
 
 impl JsBigIntLiteralExpression {
 	pub fn as_number(&self) -> Option<BigInt> {
-		parse_js_big_int(self.value_token().ok()?.text())
+		parse_js_big_int(self.value_token().text())
 	}
 }
 

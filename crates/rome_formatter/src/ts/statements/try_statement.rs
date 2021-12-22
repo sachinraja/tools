@@ -9,11 +9,11 @@ use rslint_parser::ast::{
 impl ToFormatElement for JsTryStatement {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.try_token()?)?,
+			formatter.format_token(&self.try_token())?,
 			space_token(),
-			formatter.format_node(self.body()?)?,
+			formatter.format_node(self.body())?,
 			space_token(),
-			formatter.format_node(self.catch_clause()?)?
+			formatter.format_node(self.catch_clause())?
 		])
 	}
 }
@@ -27,12 +27,12 @@ impl ToFormatElement for JsTryFinallyStatement {
 		};
 
 		Ok(format_elements![
-			formatter.format_token(&self.try_token()?)?,
+			formatter.format_token(&self.try_token())?,
 			space_token(),
-			formatter.format_node(self.body()?)?,
+			formatter.format_node(self.body())?,
 			formatted_catch_clause,
 			space_token(),
-			formatter.format_node(self.finally_clause()?)?
+			formatter.format_node(self.finally_clause())?
 		])
 	}
 }
@@ -41,17 +41,17 @@ impl ToFormatElement for JsCatchClause {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		if let Some(declaration) = self.declaration() {
 			Ok(format_elements![
-				formatter.format_token(&self.catch_token()?)?,
+				formatter.format_token(&self.catch_token())?,
 				space_token(),
 				formatter.format_node(declaration)?,
 				space_token(),
-				formatter.format_node(self.body()?)?
+				formatter.format_node(self.body())?
 			])
 		} else {
 			Ok(format_elements![
-				formatter.format_token(&self.catch_token()?)?,
+				formatter.format_token(&self.catch_token())?,
 				space_token(),
-				formatter.format_node(self.body()?)?
+				formatter.format_node(self.body())?
 			])
 		}
 	}
@@ -60,9 +60,9 @@ impl ToFormatElement for JsCatchClause {
 impl ToFormatElement for JsCatchDeclaration {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(group_elements(format_elements![
-			formatter.format_token(&self.l_paren_token()?)?,
-			soft_indent(formatter.format_node(self.binding()?)?),
-			formatter.format_token(&self.r_paren_token()?)?
+			formatter.format_token(&self.l_paren_token())?,
+			soft_indent(formatter.format_node(self.binding())?),
+			formatter.format_token(&self.r_paren_token())?
 		]))
 	}
 }
@@ -70,9 +70,9 @@ impl ToFormatElement for JsCatchDeclaration {
 impl ToFormatElement for JsFinallyClause {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.finally_token()?)?,
+			formatter.format_token(&self.finally_token())?,
 			space_token(),
-			formatter.format_node(self.body()?)?
+			formatter.format_node(self.body())?
 		])
 	}
 }

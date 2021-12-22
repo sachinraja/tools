@@ -19,17 +19,17 @@ impl ToFormatElement for JsClassExpression {
 		};
 
 		Ok(format_elements![
-			formatter.format_token(&self.class_token()?)?,
+			formatter.format_token(&self.class_token())?,
 			id,
 			extends,
 			space_token(),
 			group_elements(format_elements![
-				formatter.format_token(&self.l_curly_token()?)?,
+				formatter.format_token(&self.l_curly_token())?,
 				block_indent(join_elements(
 					hard_line_break(),
 					formatter.format_nodes(self.members())?
 				)),
-				formatter.format_token(&self.r_curly_token()?)?
+				formatter.format_token(&self.r_curly_token())?
 			])
 		])
 	}

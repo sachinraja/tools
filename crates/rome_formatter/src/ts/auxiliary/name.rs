@@ -12,15 +12,15 @@ impl ToFormatElement for JsAnyName {
 
 impl ToFormatElement for JsName {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		formatter.format_token(&self.value_token()?)
+		formatter.format_token(&self.value_token())
 	}
 }
 
 impl ToFormatElement for JsPrivateName {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.hash_token()?)?,
-			formatter.format_token(&self.value_token()?)?
+			formatter.format_token(&self.hash_token())?,
+			formatter.format_token(&self.value_token())?
 		])
 	}
 }

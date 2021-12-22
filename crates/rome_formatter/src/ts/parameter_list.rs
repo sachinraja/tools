@@ -9,12 +9,12 @@ impl ToFormatElement for JsParameters {
 		let param_tokens = formatter.format_separated(self.items())?;
 
 		Ok(group_elements(format_elements![
-			formatter.format_token(&self.l_paren_token()?)?,
+			formatter.format_token(&self.l_paren_token())?,
 			soft_indent(format_elements![
 				join_elements(soft_line_break_or_space(), param_tokens),
 				if_group_breaks(token(",")),
 			]),
-			formatter.format_token(&self.r_paren_token()?)?
+			formatter.format_token(&self.r_paren_token())?
 		]))
 	}
 }
@@ -34,8 +34,8 @@ impl ToFormatElement for JsAnyParameter {
 impl ToFormatElement for JsRestParameter {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.dotdotdot_token()?)?,
-			formatter.format_node(self.binding()?)?
+			formatter.format_token(&self.dotdotdot_token())?,
+			formatter.format_node(self.binding())?
 		])
 	}
 }

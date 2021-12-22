@@ -17,7 +17,7 @@ impl ToFormatElement for JsObjectExpression {
 		};
 
 		Ok(group_elements(format_elements!(
-			formatter.format_token(&self.l_curly_token()?)?,
+			formatter.format_token(&self.l_curly_token())?,
 			space.clone(),
 			soft_indent(format_elements![
 				join_elements(
@@ -27,7 +27,7 @@ impl ToFormatElement for JsObjectExpression {
 				if_group_breaks(token(",")),
 			]),
 			space,
-			formatter.format_token(&self.r_curly_token()?)?,
+			formatter.format_token(&self.r_curly_token())?,
 		)))
 	}
 }

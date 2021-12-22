@@ -101,7 +101,6 @@ impl Formatter {
 	/// ```
 	pub fn format_token(&self, syntax_token: &SyntaxToken) -> FormatResult<FormatElement> {
 		Ok(token(syntax_token.text_trimmed()))
-		}
 	}
 
 	/// Formats each child and returns the result as a list.
@@ -132,8 +131,8 @@ impl Formatter {
 		let mut result = Vec::with_capacity(list.len());
 
 		for (index, element) in list.elements().enumerate() {
-			let node = self.format_node(element.node()?)?;
-			if let Some(separator) = element.trailing_separator()? {
+			let node = self.format_node(element.node())?;
+			if let Some(separator) = element.trailing_separator() {
 				let formatted_separator = self.format_token(&separator)?;
 				if index == list.len() - 1 {
 					result.push(node)

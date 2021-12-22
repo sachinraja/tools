@@ -39,7 +39,7 @@ impl ToFormatElement for Buzz {
 
 	```rust
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		let l_paren_yes = formatter.format_token(&self.l_paren_token()?)?; // yes
+		let l_paren_yes = formatter.format_token(&self.l_paren_token())?; // yes
 		let l_paren_no = toke("("); // no
 	}
 	```

@@ -114,11 +114,11 @@ impl ParserProgress {
 ///
 /// // Convert the untyped SyntaxNode into a typed AST node
 /// let expression_snipped = JsExpressionSnipped::cast(untyped_node).unwrap();
-/// let expression = expression_snipped.expression().unwrap();
+/// let expression = expression_snipped.expression();
 ///
 /// match expression {
 ///   JsAnyExpression::JsParenthesizedExpression(parenthesized) => { ///
-///     assert_eq!(parenthesized.expression().unwrap().syntax().text(), "delete b");
+///     assert_eq!(parenthesized.expression().syntax().text(), "delete b");
 ///   },
 ///   _ => panic!("Expected parenthesized expression")
 /// }

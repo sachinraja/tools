@@ -12,11 +12,11 @@ impl ToFormatElement for JsObjectAssignmentPattern {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		let properties = formatter.format_separated(self.properties())?;
 		Ok(group_elements(format_elements![
-			formatter.format_token(&self.l_curly_token()?)?,
+			formatter.format_token(&self.l_curly_token())?,
 			space_token(),
 			soft_indent(join_elements(soft_line_break_or_space(), properties)),
 			space_token(),
-			formatter.format_token(&self.r_curly_token()?)?,
+			formatter.format_token(&self.r_curly_token())?,
 		]))
 	}
 }
@@ -46,7 +46,7 @@ impl ToFormatElement for JsObjectAssignmentPatternShorthandProperty {
 			empty_element()
 		};
 		Ok(format_elements![
-			formatter.format_node(self.identifier()?)?,
+			formatter.format_node(self.identifier())?,
 			init_node
 		])
 	}
@@ -60,10 +60,10 @@ impl ToFormatElement for JsObjectAssignmentPatternProperty {
 			empty_element()
 		};
 		Ok(format_elements![
-			formatter.format_node(self.member()?)?,
-			formatter.format_token(&self.colon_token()?)?,
+			formatter.format_node(self.member())?,
+			formatter.format_token(&self.colon_token())?,
 			space_token(),
-			formatter.format_node(self.pattern()?)?,
+			formatter.format_node(self.pattern())?,
 			init_node,
 		])
 	}
@@ -72,8 +72,8 @@ impl ToFormatElement for JsObjectAssignmentPatternProperty {
 impl ToFormatElement for JsObjectAssignmentPatternRest {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.dotdotdot_token()?)?,
-			formatter.format_node(self.target()?)?,
+			formatter.format_token(&self.dotdotdot_token())?,
+			formatter.format_node(self.target())?,
 		])
 	}
 }

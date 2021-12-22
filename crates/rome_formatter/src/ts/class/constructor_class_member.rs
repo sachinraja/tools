@@ -10,10 +10,10 @@ use rslint_parser::ast::{
 impl ToFormatElement for JsConstructorClassMember {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_node(self.name()?)?,
-			formatter.format_node(self.parameters()?)?,
+			formatter.format_node(self.name())?,
+			formatter.format_node(self.parameters())?,
 			space_token(),
-			formatter.format_node(self.body()?)?
+			formatter.format_node(self.body())?
 		])
 	}
 }
@@ -23,12 +23,12 @@ impl ToFormatElement for JsConstructorParameters {
 		let params = formatter.format_separated(self.parameters())?;
 
 		Ok(group_elements(format_elements!(
-			formatter.format_token(&self.l_paren_token()?)?,
+			formatter.format_token(&self.l_paren_token())?,
 			soft_indent(format_elements![
 				join_elements(soft_line_break_or_space(), params),
 				if_group_breaks(token(",")),
 			]),
-			formatter.format_token(&self.r_paren_token()?)?,
+			formatter.format_token(&self.r_paren_token())?,
 		)))
 	}
 }

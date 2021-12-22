@@ -50,7 +50,7 @@ mod tests {
 	macro_rules! assert_float {
 		($literal:literal, $value:expr) => {
 			let parsed = parse_expr($literal, 0);
-			match parsed.tree().expression().unwrap() {
+			match parsed.tree().expression() {
 				JsAnyExpression::JsAnyLiteralExpression(
 					JsAnyLiteralExpression::JsNumberLiteralExpression(literal),
 				) => {
@@ -67,7 +67,7 @@ mod tests {
 	macro_rules! assert_bigint {
 		($literal:literal, $value:expr) => {
 			let parsed = parse_expr($literal, 0);
-			match parsed.tree().expression().unwrap() {
+			match parsed.tree().expression() {
 				JsAnyExpression::JsAnyLiteralExpression(
 					JsAnyLiteralExpression::JsBigIntLiteralExpression(literal),
 				) => {

@@ -2,51 +2,63 @@ JsScript {
     interpreter_token: missing (optional),
     directives: JsDirectiveList [],
     statements: JsStatementList [
-        JsVariableStatement {
-            declarations: JsVariableDeclarations {
-                kind: LET_KW@0..14 "let" [Comments("// SCRIPT"), Whitespace("\n")] [Whitespace(" ")],
-                items: JsVariableDeclarationList [
-                    JsVariableDeclaration {
-                        id: JsUnknownBinding {
+        JsUnknownStatement {
+            items: [
+                JsUnknown {
+                    items: [
+                        LET_KW@0..14 "let" [Comments("// SCRIPT"), Whitespace("\n")] [Whitespace(" ")],
+                        JsUnknown {
                             items: [
-                                IDENT@14..18 "let" [] [Whitespace(" ")],
+                                JsUnknown {
+                                    items: [
+                                        JsUnknown {
+                                            items: [
+                                                IDENT@14..18 "let" [] [Whitespace(" ")],
+                                            ],
+                                        },
+                                        JsInitializerClause {
+                                            eq_token: EQ@18..20 "=" [] [Whitespace(" ")],
+                                            expression: JsNumberLiteralExpression {
+                                                value_token: JS_NUMBER_LITERAL@20..21 "5" [] [],
+                                            },
+                                        },
+                                    ],
+                                },
                             ],
                         },
-                        excl_token: missing (optional),
-                        type_annotation: missing (optional),
-                        initializer: JsInitializerClause {
-                            eq_token: EQ@18..20 "=" [] [Whitespace(" ")],
-                            expression: JsNumberLiteralExpression {
-                                value_token: JS_NUMBER_LITERAL@20..21 "5" [] [],
-                            },
-                        },
-                    },
-                ],
-            },
-            semicolon_token: SEMICOLON@21..22 ";" [] [],
+                    ],
+                },
+                SEMICOLON@21..22 ";" [] [],
+            ],
         },
-        JsVariableStatement {
-            declarations: JsVariableDeclarations {
-                kind: CONST_KW@22..29 "const" [Whitespace("\n")] [Whitespace(" ")],
-                items: JsVariableDeclarationList [
-                    JsVariableDeclaration {
-                        id: JsUnknownBinding {
+        JsUnknownStatement {
+            items: [
+                JsUnknown {
+                    items: [
+                        CONST_KW@22..29 "const" [Whitespace("\n")] [Whitespace(" ")],
+                        JsUnknown {
                             items: [
-                                IDENT@29..33 "let" [] [Whitespace(" ")],
+                                JsUnknown {
+                                    items: [
+                                        JsUnknown {
+                                            items: [
+                                                IDENT@29..33 "let" [] [Whitespace(" ")],
+                                            ],
+                                        },
+                                        JsInitializerClause {
+                                            eq_token: EQ@33..35 "=" [] [Whitespace(" ")],
+                                            expression: JsNumberLiteralExpression {
+                                                value_token: JS_NUMBER_LITERAL@35..36 "5" [] [],
+                                            },
+                                        },
+                                    ],
+                                },
                             ],
                         },
-                        excl_token: missing (optional),
-                        type_annotation: missing (optional),
-                        initializer: JsInitializerClause {
-                            eq_token: EQ@33..35 "=" [] [Whitespace(" ")],
-                            expression: JsNumberLiteralExpression {
-                                value_token: JS_NUMBER_LITERAL@35..36 "5" [] [],
-                            },
-                        },
-                    },
-                ],
-            },
-            semicolon_token: SEMICOLON@36..37 ";" [] [],
+                    ],
+                },
+                SEMICOLON@36..37 ";" [] [],
+            ],
         },
     ],
     eof_token: EOF@37..38 "" [Whitespace("\n")] [],
@@ -56,30 +68,26 @@ JsScript {
   0: (empty)
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_STATEMENT_LIST@0..37
-    0: JS_VARIABLE_STATEMENT@0..22
-      0: JS_VARIABLE_DECLARATIONS@0..21
+    0: JS_UNKNOWN_STATEMENT@0..22
+      0: JS_UNKNOWN@0..21
         0: LET_KW@0..14 "let" [Comments("// SCRIPT"), Whitespace("\n")] [Whitespace(" ")]
-        1: JS_VARIABLE_DECLARATION_LIST@14..21
-          0: JS_VARIABLE_DECLARATION@14..21
-            0: JS_UNKNOWN_BINDING@14..18
+        1: JS_UNKNOWN@14..21
+          0: JS_UNKNOWN@14..21
+            0: JS_UNKNOWN@14..18
               0: IDENT@14..18 "let" [] [Whitespace(" ")]
-            1: (empty)
-            2: (empty)
-            3: JS_INITIALIZER_CLAUSE@18..21
+            1: JS_INITIALIZER_CLAUSE@18..21
               0: EQ@18..20 "=" [] [Whitespace(" ")]
               1: JS_NUMBER_LITERAL_EXPRESSION@20..21
                 0: JS_NUMBER_LITERAL@20..21 "5" [] []
       1: SEMICOLON@21..22 ";" [] []
-    1: JS_VARIABLE_STATEMENT@22..37
-      0: JS_VARIABLE_DECLARATIONS@22..36
+    1: JS_UNKNOWN_STATEMENT@22..37
+      0: JS_UNKNOWN@22..36
         0: CONST_KW@22..29 "const" [Whitespace("\n")] [Whitespace(" ")]
-        1: JS_VARIABLE_DECLARATION_LIST@29..36
-          0: JS_VARIABLE_DECLARATION@29..36
-            0: JS_UNKNOWN_BINDING@29..33
+        1: JS_UNKNOWN@29..36
+          0: JS_UNKNOWN@29..36
+            0: JS_UNKNOWN@29..33
               0: IDENT@29..33 "let" [] [Whitespace(" ")]
-            1: (empty)
-            2: (empty)
-            3: JS_INITIALIZER_CLAUSE@33..36
+            1: JS_INITIALIZER_CLAUSE@33..36
               0: EQ@33..35 "=" [] [Whitespace(" ")]
               1: JS_NUMBER_LITERAL_EXPRESSION@35..36
                 0: JS_NUMBER_LITERAL@35..36 "5" [] []

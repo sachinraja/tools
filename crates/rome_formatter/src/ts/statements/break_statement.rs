@@ -13,7 +13,7 @@ impl ToFormatElement for JsBreakStatement {
 		};
 
 		Ok(format_elements![
-			formatter.format_token(&self.break_token()?)?,
+			formatter.format_token(&self.break_token())?,
 			label,
 			token(";")
 		])

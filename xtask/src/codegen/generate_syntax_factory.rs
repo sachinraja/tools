@@ -18,33 +18,39 @@ pub fn generate_syntax_factory(ast: &AstSrc) -> Result<String> {
 					let ast_type_name = format_ident!("{}", ty);
 
 					quote! {
-						#ast_type_name::can_cast(element.kind())
+						#ast_type_name::can_cast(current_element.as_ref().unwrap().kind())
 					}
 				}
 				Field::Token { kind, .. } => match kind {
 					TokenKind::Single(expected) => {
 						let expected_kind = token_kind_to_code(expected);
-						quote! { element.kind() == #expected_kind}
+						quote! { current_element.as_ref().unwrap().kind() == #expected_kind}
 					}
 					TokenKind::Many(expected) => {
 						let expected_kinds = expected.iter().map(|kind| token_kind_to_code(kind));
 						quote! {
-							matches!(element.kind(), #(#expected_kinds)|*)
+							matches!(current_element.as_ref().unwrap().kind(), #(#expected_kinds)|*)
 						}
 					}
 				},
 			};
 
-			quote! {
-				if let Some(element) = &current_element {
-					if #field_predicate {
-						slots.mark_present();
-						current_element = elements.next();
-					} else {
-						slots.mark_absent();
-					}
-				} else {
+			let mismatch_body = if field.is_optional() {
+				quote! {
 					slots.mark_absent();
+				}
+			} else {
+				quote! {
+					return RawSyntaxNode::new(#kind.to_unknown(), children.into_iter().map(Some));
+				}
+			};
+
+			quote! {
+				if current_element.is_some() && #field_predicate {
+					slots.mark_present();
+					current_element = elements.next();
+				} else {
+					#mismatch_body
 				}
 			}
 		});

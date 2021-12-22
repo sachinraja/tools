@@ -2,10 +2,10 @@ JsModule {
     interpreter_token: missing (optional),
     directives: JsDirectiveList [],
     items: JsModuleItemList [
-        JsThrowStatement {
-            throw_token: THROW_KW@0..5 "throw" [] [],
-            argument: missing (required),
-            semicolon_token: missing (optional),
+        JsUnknownStatement {
+            items: [
+                THROW_KW@0..5 "throw" [] [],
+            ],
         },
         JsExpressionStatement {
             expression: JsNewExpression {
@@ -28,10 +28,11 @@ JsModule {
             },
             semicolon_token: missing (optional),
         },
-        JsThrowStatement {
-            throw_token: THROW_KW@27..33 "throw" [Whitespace("\n")] [],
-            argument: missing (required),
-            semicolon_token: SEMICOLON@33..34 ";" [] [],
+        JsUnknownStatement {
+            items: [
+                THROW_KW@27..33 "throw" [Whitespace("\n")] [],
+                SEMICOLON@33..34 ";" [] [],
+            ],
         },
     ],
     eof_token: EOF@34..35 "" [Whitespace("\n")] [],
@@ -41,10 +42,8 @@ JsModule {
   0: (empty)
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_MODULE_ITEM_LIST@0..34
-    0: JS_THROW_STATEMENT@0..5
+    0: JS_UNKNOWN_STATEMENT@0..5
       0: THROW_KW@0..5 "throw" [] []
-      1: (empty)
-      2: (empty)
     1: JS_EXPRESSION_STATEMENT@5..27
       0: JS_NEW_EXPRESSION@5..27
         0: NEW_KW@5..10 "new" [Whitespace("\n")] [Whitespace(" ")]
@@ -59,10 +58,9 @@ JsModule {
               0: JS_STRING_LITERAL@16..26 "\"oh no :(\"" [] []
           2: R_PAREN@26..27 ")" [] []
       1: (empty)
-    2: JS_THROW_STATEMENT@27..34
+    2: JS_UNKNOWN_STATEMENT@27..34
       0: THROW_KW@27..33 "throw" [Whitespace("\n")] []
-      1: (empty)
-      2: SEMICOLON@33..34 ";" [] []
+      1: SEMICOLON@33..34 ";" [] []
   3: EOF@34..35 "" [Whitespace("\n")] []
 --
 error[SyntaxError]: Linebreaks between a throw statement and the error to be thrown are not allowed

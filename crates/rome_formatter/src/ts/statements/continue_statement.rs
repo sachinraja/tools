@@ -13,7 +13,7 @@ impl ToFormatElement for JsContinueStatement {
 		};
 
 		Ok(format_elements![
-			formatter.format_token(&self.continue_token()?)?,
+			formatter.format_token(&self.continue_token())?,
 			label,
 			token(";")
 		])

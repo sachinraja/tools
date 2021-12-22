@@ -59,7 +59,6 @@ mod ts;
 use crate::format_json::tokenize_json;
 
 pub use formatter::Formatter;
-use rslint_parser::SyntaxError;
 
 pub use format_element::{
 	block_indent, concat_elements, empty_element, group_elements, hard_line_break, if_group_breaks,
@@ -87,22 +86,11 @@ pub type FormatResult<F> = Result<F, FormatError>;
 #[derive(Debug, PartialEq)]
 /// Series of errors encountered during formatting
 pub enum FormatError {
-	/// Node is missing and it should be required for a correct formatting
-	MissingRequiredChild,
-
 	/// In case our formatter doesn't know how to format a certain language
 	UnsupportedLanguage,
 
 	/// When the ability to format the current file has been turned off on purpose
 	CapabilityDisabled,
-}
-
-impl From<SyntaxError> for FormatError {
-	fn from(syntax_error: SyntaxError) -> Self {
-		match syntax_error {
-			SyntaxError::MissingRequiredChild(_node) => FormatError::MissingRequiredChild,
-		}
-	}
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -191,6 +179,7 @@ pub fn format(rome_path: &mut RomePath, options: FormatOptions) -> FormatResult<
 			let result = match handler.language() {
 				Language::Js => {
 					let parsed_result = parse_text(buffer.as_str(), 0);
+					dbg!(parsed_result.syntax());
 					Formatter::new(options).format_root(&parsed_result.syntax())
 				}
 				Language::Json => {

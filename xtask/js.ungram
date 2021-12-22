@@ -41,7 +41,7 @@ JsUnknown = SyntaxElement*
 JsUnknownStatement = SyntaxElement*
 JsUnknownExpression = SyntaxElement*
 JsUnknownMember = SyntaxElement*
-JsUnknownBinding = SyntaxElement*
+JsUnknownBindingPattern = SyntaxElement*
 JsUnknownAssignment = SyntaxElement*
 JsUnknownModifier = SyntaxElement*
 JsUnknownImportAssertionEntry = SyntaxElement*
@@ -350,8 +350,11 @@ JsAwaitExpression =
 
 JsYieldExpression =
 	'yield'
+	argument: JsYieldArgument?
+
+JsYieldArgument =
 	'*'?
-	argument: JsAnyExpression?
+	expression: JsAnyExpression
 
 JsImportCallExpression =
 	'import'
@@ -377,7 +380,7 @@ JsFunctionExpression =
 	'async'?
 	'function'
 	'*'?
-	id: JsAnyBinding?
+	id: JsIdentifierBinding?
 	type_parameters: TsTypeParams?
 	parameters: JsParameters
 	return_type: TsTypeAnnotation?
@@ -392,7 +395,7 @@ JsArrowFunctionExpression =
 	'=>'
 	body: JsAnyArrowFunctionBody
 
-JsAnyArrowFunctionParameters = JsParameters | JsAnyBinding
+JsAnyArrowFunctionParameters = JsParameters | JsIdentifierBinding
 JsAnyArrowFunctionBody = JsAnyExpression | JsFunctionBody
 
 // Array expression
@@ -546,7 +549,7 @@ JsShorthandPropertyObjectMember = name: JsReferenceIdentifier
 
 JsClassDeclaration  =
 	'class'
-	id: JsAnyBinding
+	id: JsIdentifierBinding
 	extends_clause: JsExtendsClause?
 	implements_clause: TsImplementsClause?
 	'{'
@@ -556,7 +559,7 @@ JsClassDeclaration  =
 
 JsClassExpression =
 	'class'
-	id: JsAnyBinding?
+	id: JsIdentifierBinding?
 	extends_clause: JsExtendsClause?
 	implements_clause: TsImplementsClause?
 	'{'
@@ -789,10 +792,6 @@ JsObjectAssignmentPatternRest =
 // BINDINGS
 ///////////////
 
-JsAnyBinding =
-	JsIdentifierBinding
-	| JsUnknownBinding
-
 // Binds a value to an identifier.
 // let x = OR function(test) {}
 //     ^               ^^^^
@@ -807,9 +806,10 @@ JsBindingPatternWithDefault =
 	default: JsAnyExpression
 
 JsAnyBindingPattern =
-	JsAnyBinding
+	JsIdentifierBinding
 	| JsArrayBindingPattern
 	| JsObjectBindingPattern
+	| JsUnknownBindingPattern
 
 // let [a, b] = [1, 2];
 //     ^^^^^^
@@ -843,8 +843,7 @@ JsAnyObjectBindingPatternMember =
 	JsObjectBindingPatternProperty
 	| JsObjectBindingPatternRest
 	| JsObjectBindingPatternShorthandProperty
-	| JsIdentifierBinding
-	| JsUnknownBinding
+	| JsUnknownBindingPattern
 
 // let { a: b.m } = {}
 //       ^^^^^^
@@ -861,14 +860,14 @@ JsObjectBindingPatternProperty =
 // let { a = "test" } = c
 //       ^^^^^^^^^^
 JsObjectBindingPatternShorthandProperty =
-	identifier: JsAnyBinding
+	identifier: JsIdentifierBinding
 	init: JsInitializerClause?
 
 // let { ...a } = c
 //       ^^^^
 JsObjectBindingPatternRest =
 	'...'
-	binding: JsAnyBinding
+	binding: JsIdentifierBinding
 
 
 ///////////////
@@ -909,7 +908,7 @@ JsFunctionDeclaration =
 	'async'?
 	'function'
 	'*'?
-	id: JsAnyBinding
+	id: JsIdentifierBinding
 	type_parameters: TsTypeParams?
 	parameters: JsParameters
 	return_type: TsTypeAnnotation?
@@ -981,7 +980,7 @@ JsImportBareClause =
 // import type foo from "mod"
 JsImportDefaultClause =
 		// 'type'?
-		local_name: JsAnyBinding
+		local_name: JsIdentifierBinding
 		'from'
 		source: JsModuleSource
 		assertion: JsImportAssertion?
@@ -992,7 +991,7 @@ JsImportNamespaceClause =
   // 'type'
 	'*'
 	'as'
-	local_name: JsAnyBinding
+	local_name: JsIdentifierBinding
 	'from'
 	source: JsModuleSource
 	assertion: JsImportAssertion?
@@ -1019,7 +1018,7 @@ JsImportNamedClause =
 // import a, { b, c } from "d";
 //        ^^
 JsDefaultImportSpecifier =
-    local_name: JsAnyBinding
+    local_name: JsIdentifierBinding
     trailing_comma: ','
 
 JsAnyNamedImport =
@@ -1031,7 +1030,7 @@ JsAnyNamedImport =
 JsNamespaceImportSpecifier =
     '*'
     'as'
-    local_name: JsAnyBinding
+    local_name: JsIdentifierBinding
 
 // import a, { b, c } from "d";
 //           ^^^^^^^^
@@ -1055,13 +1054,13 @@ JsNamedImportSpecifier =
     // 'type'?
     name: JsLiteralExportName
     'as'
-    local_name: JsAnyBinding
+    local_name: JsIdentifierBinding
 
 // import { type foo } from "mod";
 //          ^^^^^^^^
 JsShorthandNamedImportSpecifier =
     // 'type'?
-    local_name: JsAnyBinding
+    local_name: JsIdentifierBinding
 
 // import a from "mod" assert { type: "json" }
 //                     ^^^^^^^^^^^^^^^^^^^^^^^
@@ -1458,7 +1457,7 @@ TsMethodSignature =
 TsImport = 'import' type_args:TsTypeArgs '.'? '(' qualifier:TsEntityName ')'
 
 // typescript index signature
-TsIndexSignature = 'readonly'? '[' pat:JsAnyBinding ':' ty:TsType ']'
+TsIndexSignature = 'readonly'? '[' pat:JsIdentifierBinding ':' ty:TsType ']'
 
 
 TsConstructorParam =

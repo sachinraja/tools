@@ -20,7 +20,7 @@ impl ToFormatElement for JsPropertyClassMember {
 
 		Ok(format_elements![
 			static_token,
-			formatter.format_node(self.name()?)?,
+			formatter.format_node(self.name())?,
 			init,
 			token(";")
 		])

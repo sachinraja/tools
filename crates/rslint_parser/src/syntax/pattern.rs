@@ -65,6 +65,7 @@ pub(crate) trait ParseArrayPattern<P: ParseWithDefaultPattern> {
 
 		p.bump(T!['[']);
 		let elements = p.start();
+		let mut fixed_separator = false;
 		let mut progress = ParserProgress::default();
 
 		{
@@ -88,8 +89,9 @@ pub(crate) trait ParseArrayPattern<P: ParseWithDefaultPattern> {
 					break;
 				}
 
-				if !p.at(T![']']) {
-					p.expect(T![,]);
+				if !p.at(T![']']) && !p.expect(T![,]) && !fixed_separator {
+					p.synthesize_token(T![,]);
+					fixed_separator = true;
 				}
 			}
 		}

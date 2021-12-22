@@ -3,11 +3,10 @@ JsModule {
     directives: JsDirectiveList [],
     items: JsModuleItemList [
         JsExpressionStatement {
-            expression: JsNewExpression {
-                new_token: NEW_KW@0..3 "new" [] [],
-                callee: missing (required),
-                type_args: missing (optional),
-                arguments: missing (optional),
+            expression: JsUnknownExpression {
+                items: [
+                    NEW_KW@0..3 "new" [] [],
+                ],
             },
             semicolon_token: SEMICOLON@3..4 ";" [] [],
         },
@@ -20,11 +19,8 @@ JsModule {
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_MODULE_ITEM_LIST@0..4
     0: JS_EXPRESSION_STATEMENT@0..4
-      0: JS_NEW_EXPRESSION@0..3
+      0: JS_UNKNOWN_EXPRESSION@0..3
         0: NEW_KW@0..3 "new" [] []
-        1: (empty)
-        2: (empty)
-        3: (empty)
       1: SEMICOLON@3..4 ";" [] []
   3: EOF@4..5 "" [Whitespace("\n")] []
 --

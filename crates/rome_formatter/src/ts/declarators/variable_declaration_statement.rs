@@ -7,7 +7,7 @@ use rslint_parser::ast::{JsVariableDeclaration, JsVariableDeclarations, JsVariab
 impl ToFormatElement for JsVariableStatement {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_node(self.declarations()?)?,
+			formatter.format_node(self.declarations())?,
 			token(";"),
 		])
 	}
@@ -16,7 +16,7 @@ impl ToFormatElement for JsVariableStatement {
 impl ToFormatElement for JsVariableDeclarations {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.kind()?)?,
+			formatter.format_token(&self.kind())?,
 			space_token(),
 			join_elements(
 				space_token(),
@@ -36,7 +36,7 @@ impl ToFormatElement for JsVariableDeclaration {
 		};
 
 		Ok(format_elements![
-			formatter.format_node(self.id()?)?,
+			formatter.format_node(self.id())?,
 			initializer
 		])
 	}

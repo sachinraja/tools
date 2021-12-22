@@ -2,24 +2,31 @@ JsModule {
     interpreter_token: missing (optional),
     directives: JsDirectiveList [],
     items: JsModuleItemList [
-        JsVariableStatement {
-            declarations: JsVariableDeclarations {
-                kind: VAR_KW@0..4 "var" [] [Whitespace(" ")],
-                items: JsVariableDeclarationList [
-                    JsVariableDeclaration {
-                        id: JsIdentifierBinding {
-                            name_token: IDENT@4..6 "a" [] [Whitespace(" ")],
+        JsUnknownStatement {
+            items: [
+                JsUnknown {
+                    items: [
+                        VAR_KW@0..4 "var" [] [Whitespace(" ")],
+                        JsUnknown {
+                            items: [
+                                JsUnknown {
+                                    items: [
+                                        JsIdentifierBinding {
+                                            name_token: IDENT@4..6 "a" [] [Whitespace(" ")],
+                                        },
+                                        JsUnknown {
+                                            items: [
+                                                EQ@6..7 "=" [] [],
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
                         },
-                        excl_token: missing (optional),
-                        type_annotation: missing (optional),
-                        initializer: JsInitializerClause {
-                            eq_token: EQ@6..7 "=" [] [],
-                            expression: missing (required),
-                        },
-                    },
-                ],
-            },
-            semicolon_token: SEMICOLON@7..8 ";" [] [],
+                    ],
+                },
+                SEMICOLON@7..8 ";" [] [],
+            ],
         },
         JsVariableStatement {
             declarations: JsVariableDeclarations {
@@ -71,18 +78,15 @@ JsModule {
   0: (empty)
   1: JS_DIRECTIVE_LIST@0..0
   2: JS_MODULE_ITEM_LIST@0..31
-    0: JS_VARIABLE_STATEMENT@0..8
-      0: JS_VARIABLE_DECLARATIONS@0..7
+    0: JS_UNKNOWN_STATEMENT@0..8
+      0: JS_UNKNOWN@0..7
         0: VAR_KW@0..4 "var" [] [Whitespace(" ")]
-        1: JS_VARIABLE_DECLARATION_LIST@4..7
-          0: JS_VARIABLE_DECLARATION@4..7
+        1: JS_UNKNOWN@4..7
+          0: JS_UNKNOWN@4..7
             0: JS_IDENTIFIER_BINDING@4..6
               0: IDENT@4..6 "a" [] [Whitespace(" ")]
-            1: (empty)
-            2: (empty)
-            3: JS_INITIALIZER_CLAUSE@6..7
+            1: JS_UNKNOWN@6..7
               0: EQ@6..7 "=" [] []
-              1: (empty)
       1: SEMICOLON@7..8 ";" [] []
     1: JS_VARIABLE_STATEMENT@8..21
       0: JS_VARIABLE_DECLARATIONS@8..21

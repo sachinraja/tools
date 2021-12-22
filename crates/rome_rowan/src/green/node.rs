@@ -503,22 +503,17 @@ mod tests {
 	use crate::raw_language::{RawLanguageKind, RawSyntaxTreeBuilder};
 	use crate::GreenNode;
 
-	fn build_test_list() -> GreenNode {
+	fn build_test_node() -> GreenNode {
 		let mut builder: RawSyntaxTreeBuilder = RawSyntaxTreeBuilder::new();
 
-		// list
-		builder.start_node(RawLanguageKind::SEPARATED_EXPRESSION_LIST);
+		builder.start_node(RawLanguageKind::YIELD_EXPRESSION);
 
-		// element 1
+		builder.token(RawLanguageKind::YIELD_TOKEN, "yield");
+
+		// Missing * token
+
 		builder.start_node(RawLanguageKind::LITERAL_EXPRESSION);
 		builder.token(RawLanguageKind::STRING_TOKEN, "a");
-		builder.finish_node();
-
-		// Missing ,
-
-		// element 2
-		builder.start_node(RawLanguageKind::LITERAL_EXPRESSION);
-		builder.token(RawLanguageKind::STRING_TOKEN, "b");
 		builder.finish_node();
 
 		builder.finish_node();
@@ -528,7 +523,7 @@ mod tests {
 
 	#[test]
 	fn children() {
-		let root = build_test_list();
+		let root = build_test_node();
 
 		// Test that children skips missing
 		assert_eq!(root.children().count(), 2);
@@ -536,7 +531,7 @@ mod tests {
 			root.children()
 				.map(|child| child.element.to_string())
 				.collect::<Vec<_>>(),
-			vec!["a", "b"]
+			vec!["yield", "a"]
 		);
 
 		// Slot 2 (index 1) is empty
@@ -557,7 +552,7 @@ mod tests {
 
 	#[test]
 	fn slots() {
-		let root = build_test_list();
+		let root = build_test_node();
 
 		// Has 3 slots, one is missing
 		assert_eq!(root.slots().len(), 3);

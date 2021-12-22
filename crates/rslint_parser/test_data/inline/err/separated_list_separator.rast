@@ -19,22 +19,25 @@ JsModule {
             semicolon_token: SEMICOLON@5..6 ";" [] [],
         },
         JsExpressionStatement {
-            expression: JsArrayExpression {
-                l_brack_token: L_BRACK@6..8 "[" [Whitespace("\n")] [],
-                elements: JsArrayElementList [
-                    JsNumberLiteralExpression {
-                        value_token: JS_NUMBER_LITERAL@8..10 "1" [] [Whitespace(" ")],
+            expression: JsUnknownExpression {
+                items: [
+                    L_BRACK@6..8 "[" [Whitespace("\n")] [],
+                    JsUnknownExpression {
+                        items: [
+                            JsNumberLiteralExpression {
+                                value_token: JS_NUMBER_LITERAL@8..10 "1" [] [Whitespace(" ")],
+                            },
+                            missing COMMA@10..10,
+                            JsNumberLiteralExpression {
+                                value_token: JS_NUMBER_LITERAL@10..12 "2" [] [Whitespace(" ")],
+                            },
+                            JsNumberLiteralExpression {
+                                value_token: JS_NUMBER_LITERAL@12..13 "3" [] [],
+                            },
+                        ],
                     },
-                    missing COMMA@10..10,
-                    JsNumberLiteralExpression {
-                        value_token: JS_NUMBER_LITERAL@10..12 "2" [] [Whitespace(" ")],
-                    },
-                    missing separator,
-                    JsNumberLiteralExpression {
-                        value_token: JS_NUMBER_LITERAL@12..13 "3" [] [],
-                    },
+                    R_BRACK@13..14 "]" [] [],
                 ],
-                r_brack_token: R_BRACK@13..14 "]" [] [],
             },
             semicolon_token: SEMICOLON@14..15 ";" [] [],
         },
@@ -59,26 +62,29 @@ JsModule {
             semicolon_token: SEMICOLON@24..25 ";" [] [],
         },
         JsExpressionStatement {
-            expression: JsArrayExpression {
-                l_brack_token: L_BRACK@25..27 "[" [Whitespace("\n")] [],
-                elements: JsArrayElementList [
-                    JsNumberLiteralExpression {
-                        value_token: JS_NUMBER_LITERAL@27..29 "1" [] [Whitespace(" ")],
+            expression: JsUnknownExpression {
+                items: [
+                    L_BRACK@25..27 "[" [Whitespace("\n")] [],
+                    JsUnknownExpression {
+                        items: [
+                            JsNumberLiteralExpression {
+                                value_token: JS_NUMBER_LITERAL@27..29 "1" [] [Whitespace(" ")],
+                            },
+                            missing COMMA@29..29,
+                            JsNumberLiteralExpression {
+                                value_token: JS_NUMBER_LITERAL@29..30 "2" [] [],
+                            },
+                            COMMA@30..32 "," [] [Whitespace(" ")],
+                            JsNumberLiteralExpression {
+                                value_token: JS_NUMBER_LITERAL@32..34 "3" [] [Whitespace(" ")],
+                            },
+                            JsNumberLiteralExpression {
+                                value_token: JS_NUMBER_LITERAL@34..35 "4" [] [],
+                            },
+                        ],
                     },
-                    missing COMMA@29..29,
-                    JsNumberLiteralExpression {
-                        value_token: JS_NUMBER_LITERAL@29..30 "2" [] [],
-                    },
-                    COMMA@30..32 "," [] [Whitespace(" ")],
-                    JsNumberLiteralExpression {
-                        value_token: JS_NUMBER_LITERAL@32..34 "3" [] [Whitespace(" ")],
-                    },
-                    missing separator,
-                    JsNumberLiteralExpression {
-                        value_token: JS_NUMBER_LITERAL@34..35 "4" [] [],
-                    },
+                    R_BRACK@35..36 "]" [] [],
                 ],
-                r_brack_token: R_BRACK@35..36 "]" [] [],
             },
             semicolon_token: missing (optional),
         },
@@ -102,16 +108,15 @@ JsModule {
         2: R_BRACK@4..5 "]" [] []
       1: SEMICOLON@5..6 ";" [] []
     1: JS_EXPRESSION_STATEMENT@6..15
-      0: JS_ARRAY_EXPRESSION@6..14
+      0: JS_UNKNOWN_EXPRESSION@6..14
         0: L_BRACK@6..8 "[" [Whitespace("\n")] []
-        1: JS_ARRAY_ELEMENT_LIST@8..13
+        1: JS_UNKNOWN_EXPRESSION@8..13
           0: JS_NUMBER_LITERAL_EXPRESSION@8..10
             0: JS_NUMBER_LITERAL@8..10 "1" [] [Whitespace(" ")]
           1: missing COMMA@10..10
           2: JS_NUMBER_LITERAL_EXPRESSION@10..12
             0: JS_NUMBER_LITERAL@10..12 "2" [] [Whitespace(" ")]
-          3: (empty)
-          4: JS_NUMBER_LITERAL_EXPRESSION@12..13
+          3: JS_NUMBER_LITERAL_EXPRESSION@12..13
             0: JS_NUMBER_LITERAL@12..13 "3" [] []
         2: R_BRACK@13..14 "]" [] []
       1: SEMICOLON@14..15 ";" [] []
@@ -130,9 +135,9 @@ JsModule {
         2: R_BRACK@23..24 "]" [] []
       1: SEMICOLON@24..25 ";" [] []
     3: JS_EXPRESSION_STATEMENT@25..36
-      0: JS_ARRAY_EXPRESSION@25..36
+      0: JS_UNKNOWN_EXPRESSION@25..36
         0: L_BRACK@25..27 "[" [Whitespace("\n")] []
-        1: JS_ARRAY_ELEMENT_LIST@27..35
+        1: JS_UNKNOWN_EXPRESSION@27..35
           0: JS_NUMBER_LITERAL_EXPRESSION@27..29
             0: JS_NUMBER_LITERAL@27..29 "1" [] [Whitespace(" ")]
           1: missing COMMA@29..29
@@ -141,8 +146,7 @@ JsModule {
           3: COMMA@30..32 "," [] [Whitespace(" ")]
           4: JS_NUMBER_LITERAL_EXPRESSION@32..34
             0: JS_NUMBER_LITERAL@32..34 "3" [] [Whitespace(" ")]
-          5: (empty)
-          6: JS_NUMBER_LITERAL_EXPRESSION@34..35
+          5: JS_NUMBER_LITERAL_EXPRESSION@34..35
             0: JS_NUMBER_LITERAL@34..35 "4" [] []
         2: R_BRACK@35..36 "]" [] []
       1: (empty)

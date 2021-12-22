@@ -152,7 +152,7 @@ fn parse_common(
 /// let typed_ast_node = JsComputedMemberExpression::cast(untyped_expr_node.first_child().unwrap()).unwrap();
 ///
 /// // Everything on every ast node is optional because of error recovery.
-/// let prop = dbg!(typed_ast_node.member()).unwrap();
+/// let prop = dbg!(typed_ast_node.member());
 ///
 /// // You can then go back to an untyped SyntaxNode and get its range, text, parents, children, etc.
 /// assert_eq!(prop.syntax().text(), "2");
@@ -194,7 +194,7 @@ pub fn parse_text(text: &str, file_id: usize) -> Parse<JsScript> {
 /// let typed_ast_node = JsComputedMemberExpression::cast(untyped_expr_node.first_child().unwrap()).unwrap();
 ///
 /// // Everything on every ast node is optional because of error recovery.
-/// let prop = typed_ast_node.member().unwrap();
+/// let prop = typed_ast_node.member();
 ///
 /// // You can then go back to an untyped SyntaxNode and get its range, text, parents, children, etc.
 /// assert_eq!(prop.syntax().text(), "2");

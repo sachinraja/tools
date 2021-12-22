@@ -1,5 +1,5 @@
 use crate::parser::ParsedSyntax;
-use crate::syntax::binding::parse_binding;
+use crate::syntax::binding::parse_identifier_binding;
 use crate::syntax::decl::parse_parameter_list;
 use crate::syntax::js_parse_error;
 use crate::syntax::stmt::{is_semi, parse_block_impl};
@@ -75,7 +75,7 @@ fn parse_function(p: &mut Parser, kind: JsSyntaxKind) -> ParsedSyntax {
 		..p.state.clone()
 	});
 
-	let id = parse_binding(guard);
+	let id = parse_identifier_binding(guard);
 
 	if kind == JS_FUNCTION_DECLARATION {
 		id.or_add_diagnostic(guard, |p, range| {

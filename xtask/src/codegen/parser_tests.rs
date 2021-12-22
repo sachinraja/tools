@@ -122,7 +122,7 @@ fn tests_from_dir(dir: &Path) -> Result<Tests> {
 		if !entry.file_type().is_file() {
 			continue;
 		}
-		if entry.path().extension().unwrap_or_default() != "rs" {
+		if entry.path().extension().unwrap_or_default() != "js" {
 			continue;
 		}
 		process_file(&mut res, entry.path())?;

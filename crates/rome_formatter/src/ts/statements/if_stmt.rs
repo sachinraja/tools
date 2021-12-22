@@ -14,16 +14,16 @@ impl ToFormatElement for JsIfStatement {
 
 		Ok(format_elements![
 			group_elements(format_elements![
-				formatter.format_token(&self.if_token()?)?,
+				formatter.format_token(&self.if_token())?,
 				space_token(),
 				group_elements(format_elements![
-					formatter.format_token(&self.l_paren_token()?)?,
-					soft_indent(formatter.format_node(self.test()?)?),
-					formatter.format_token(&self.r_paren_token()?)?
+					formatter.format_token(&self.l_paren_token())?,
+					soft_indent(formatter.format_node(self.test())?),
+					formatter.format_token(&self.r_paren_token())?
 				]),
 				space_token(),
 			]),
-			formatter.format_node(self.consequent()?)?,
+			formatter.format_node(self.consequent())?,
 			formatted_else_clause
 		])
 	}
@@ -32,9 +32,9 @@ impl ToFormatElement for JsIfStatement {
 impl ToFormatElement for JsElseClause {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
 		Ok(format_elements![
-			formatter.format_token(&self.else_token()?)?,
+			formatter.format_token(&self.else_token())?,
 			space_token(),
-			formatter.format_node(self.alternate()?)?,
+			formatter.format_node(self.alternate())?,
 		])
 	}
 }

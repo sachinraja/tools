@@ -2,7 +2,7 @@ use crate::parser::{expected_any, ToDiagnostic};
 use crate::syntax::class::parse_initializer_clause;
 use crate::syntax::expr::{is_at_identifier, parse_identifier};
 use crate::syntax::js_parse_error::{
-	expected_binding, expected_identifier, expected_object_member_name,
+	expected_binding_pattern, expected_identifier, expected_object_member_name,
 };
 use crate::syntax::object::{is_at_object_member_name, parse_object_member_name};
 use crate::syntax::pattern::{ParseArrayPattern, ParseObjectPattern, ParseWithDefaultPattern};
@@ -27,10 +27,6 @@ pub(crate) fn parse_binding_pattern_with_optional_default(p: &mut Parser) -> Par
 
 fn is_at_identifier_binding(p: &Parser) -> bool {
 	is_at_identifier(p)
-}
-
-pub(crate) fn parse_binding(p: &mut Parser) -> ParsedSyntax {
-	parse_identifier_binding(p)
 }
 
 // test_err binding_identifier_invalid
@@ -133,7 +129,7 @@ impl ParseWithDefaultPattern for BindingPatternWithDefault {
 
 	#[inline]
 	fn expected_pattern_error(p: &Parser, range: Range<usize>) -> Diagnostic {
-		expected_binding(p, range)
+		expected_binding_pattern(p, range)
 	}
 
 	#[inline]
@@ -170,7 +166,7 @@ struct ArrayBindingPattern;
 impl ParseArrayPattern<BindingPatternWithDefault> for ArrayBindingPattern {
 	#[inline]
 	fn unknown_pattern_kind() -> JsSyntaxKind {
-		JS_UNKNOWN_BINDING
+		JS_UNKNOWN_BINDING_PATTERN
 	}
 
 	#[inline]
@@ -217,7 +213,7 @@ struct ObjectBindingPattern;
 impl ParseObjectPattern for ObjectBindingPattern {
 	#[inline]
 	fn unknown_pattern_kind() -> JsSyntaxKind {
-		JS_UNKNOWN_BINDING
+		JS_UNKNOWN_BINDING_PATTERN
 	}
 
 	#[inline]
@@ -259,12 +255,12 @@ impl ParseObjectPattern for ObjectBindingPattern {
 		let m = p.start();
 
 		let kind = if p.at(T![=]) || (is_at_identifier_binding(p) && !p.nth_at(1, T![:])) {
-			parse_binding(p).or_add_diagnostic(p, expected_identifier);
+			parse_identifier_binding(p).or_add_diagnostic(p, expected_identifier);
 			JS_OBJECT_BINDING_PATTERN_SHORTHAND_PROPERTY
 		} else {
 			parse_object_member_name(p).or_add_diagnostic(p, expected_object_member_name);
 			if p.expect(T![:]) {
-				parse_binding_pattern(p).or_add_diagnostic(p, expected_binding);
+				parse_binding_pattern(p).or_add_diagnostic(p, expected_binding_pattern);
 			}
 			JS_OBJECT_BINDING_PATTERN_PROPERTY
 		};
@@ -298,11 +294,11 @@ impl ParseObjectPattern for ObjectBindingPattern {
 				if inner.kind() != JS_IDENTIFIER_BINDING {
 					let inner_range = inner.range(p);
 					// Don't add multiple errors
-					if inner.kind() != JS_UNKNOWN_BINDING {
+					if inner.kind() != JS_UNKNOWN_BINDING_PATTERN {
 						p.error(p.err_builder("Expected identifier binding").primary(inner_range, "Object rest patterns must bind to an identifier, other patterns are not allowed."));
 					}
 
-					inner.change_kind(p, JS_UNKNOWN_BINDING);
+					inner.change_kind(p, JS_UNKNOWN_BINDING_PATTERN);
 				}
 			}
 

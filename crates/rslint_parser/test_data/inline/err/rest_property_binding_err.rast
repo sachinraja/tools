@@ -10,9 +10,10 @@ JsModule {
                         id: JsObjectBindingPattern {
                             l_curly_token: L_CURLY@4..6 "{" [] [Whitespace(" ")],
                             properties: JsObjectBindingPatternPropertyList [
-                                JsObjectBindingPatternRest {
-                                    dotdotdot_token: DOT2@6..10 "..." [] [Whitespace(" ")],
-                                    binding: missing (required),
+                                JsUnknownBinding {
+                                    items: [
+                                        DOT2@6..10 "..." [] [Whitespace(" ")],
+                                    ],
                                 },
                             ],
                             r_curly_token: R_CURLY@10..12 "}" [] [Whitespace(" ")],
@@ -259,9 +260,8 @@ JsModule {
             0: JS_OBJECT_BINDING_PATTERN@4..12
               0: L_CURLY@4..6 "{" [] [Whitespace(" ")]
               1: JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST@6..10
-                0: JS_OBJECT_BINDING_PATTERN_REST@6..10
+                0: JS_UNKNOWN_BINDING_PATTERN@6..10
                   0: DOT2@6..10 "..." [] [Whitespace(" ")]
-                  1: (empty)
               2: R_CURLY@10..12 "}" [] [Whitespace(" ")]
             1: (empty)
             2: (empty)
@@ -279,7 +279,7 @@ JsModule {
             0: JS_OBJECT_BINDING_PATTERN@21..42
               0: L_CURLY@21..23 "{" [] [Whitespace(" ")]
               1: JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST@23..40
-                0: JS_UNKNOWN_BINDING@23..40
+                0: JS_UNKNOWN_BINDING_PATTERN@23..40
                   0: DOT2@23..26 "..." [] []
                   1: JS_IDENTIFIER_BINDING@26..28
                     0: IDENT@26..28 "c" [] [Whitespace(" ")]
@@ -304,7 +304,7 @@ JsModule {
               1: JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST@53..60
                 0: JS_OBJECT_BINDING_PATTERN_REST@53..60
                   0: DOT2@53..56 "..." [] []
-                  1: JS_UNKNOWN_BINDING@56..60
+                  1: JS_UNKNOWN_BINDING_PATTERN@56..60
                     0: L_CURLY@56..57 "{" [] []
                     1: JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST@57..58
                       0: JS_OBJECT_BINDING_PATTERN_SHORTHAND_PROPERTY@57..58
@@ -329,7 +329,7 @@ JsModule {
             0: JS_OBJECT_BINDING_PATTERN@71..101
               0: L_CURLY@71..73 "{" [] [Whitespace(" ")]
               1: JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST@73..99
-                0: JS_UNKNOWN_BINDING@73..80
+                0: JS_UNKNOWN_BINDING_PATTERN@73..80
                   0: DOT2@73..76 "..." [] []
                   1: JS_IDENTIFIER_BINDING@76..80
                     0: IDENT@76..80 "rest" [] []
@@ -355,7 +355,7 @@ JsModule {
             0: JS_OBJECT_BINDING_PATTERN@110..123
               0: L_CURLY@110..112 "{" [] [Whitespace(" ")]
               1: JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST@112..121
-                0: JS_UNKNOWN_BINDING@112..119
+                0: JS_UNKNOWN_BINDING_PATTERN@112..119
                   0: DOT2@112..115 "..." [] []
                   1: JS_IDENTIFIER_BINDING@115..119
                     0: IDENT@115..119 "rest" [] []
@@ -395,7 +395,7 @@ JsModule {
                     1: JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST@160..169
                       0: JS_OBJECT_BINDING_PATTERN_REST@160..169
                         0: DOT2@160..163 "..." [] []
-                        1: JS_UNKNOWN_BINDING@163..169
+                        1: JS_UNKNOWN_BINDING_PATTERN@163..169
                           0: IDENT@163..169 "await" [] [Whitespace(" ")]
                     2: R_CURLY@169..171 "}" [] [Whitespace(" ")]
                   1: (empty)

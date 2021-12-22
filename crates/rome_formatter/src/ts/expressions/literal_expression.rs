@@ -6,7 +6,7 @@ use rslint_parser::ast::{
 
 impl ToFormatElement for JsStringLiteralExpression {
 	fn to_format_element(&self, _: &Formatter) -> FormatResult<FormatElement> {
-		let value_token = self.value_token()?;
+		let value_token = self.value_token();
 		let quoted = value_token.text_trimmed();
 
 		// uses single quotes
@@ -22,25 +22,25 @@ impl ToFormatElement for JsStringLiteralExpression {
 
 impl ToFormatElement for JsBooleanLiteralExpression {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		formatter.format_token(&self.value_token()?)
+		formatter.format_token(&self.value_token())
 	}
 }
 
 impl ToFormatElement for JsNullLiteralExpression {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		formatter.format_token(&self.value_token()?)
+		formatter.format_token(&self.value_token())
 	}
 }
 
 impl ToFormatElement for JsNumberLiteralExpression {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		formatter.format_token(&self.value_token()?)
+		formatter.format_token(&self.value_token())
 	}
 }
 
 impl ToFormatElement for JsBigIntLiteralExpression {
 	fn to_format_element(&self, formatter: &Formatter) -> FormatResult<FormatElement> {
-		formatter.format_token(&self.value_token()?)
+		formatter.format_token(&self.value_token())
 	}
 }
 

@@ -14,20 +14,24 @@ JsModule {
                         type_annotation: missing (optional),
                         initializer: JsInitializerClause {
                             eq_token: EQ@6..8 "=" [] [Whitespace(" ")],
-                            expression: Template {
-                                tag: missing (optional),
-                                l_tick_token: BACKTICK@8..9 "`" [] [],
-                                elements: TemplateElementList [
-                                    TemplateChunkElement {
-                                        template_chunk_token: TEMPLATE_CHUNK@9..13 "foo " [] [],
+                            expression: JsUnknownExpression {
+                                items: [
+                                    BACKTICK@8..9 "`" [] [],
+                                    JsUnknown {
+                                        items: [
+                                            TemplateChunkElement {
+                                                template_chunk_token: TEMPLATE_CHUNK@9..13 "foo " [] [],
+                                            },
+                                            JsUnknown {
+                                                items: [
+                                                    DOLLAR_CURLY@13..15 "${" [] [],
+                                                    R_CURLY@15..16 "}" [] [],
+                                                ],
+                                            },
+                                        ],
                                     },
-                                    TemplateElement {
-                                        dollar_curly_token: DOLLAR_CURLY@13..15 "${" [] [],
-                                        expression: missing (required),
-                                        r_curly_token: R_CURLY@15..16 "}" [] [],
-                                    },
+                                    BACKTICK@16..17 "`" [] [],
                                 ],
-                                r_tick_token: BACKTICK@16..17 "`" [] [],
                             },
                         },
                     },
@@ -54,17 +58,15 @@ JsModule {
             2: (empty)
             3: JS_INITIALIZER_CLAUSE@6..17
               0: EQ@6..8 "=" [] [Whitespace(" ")]
-              1: TEMPLATE@8..17
-                0: (empty)
-                1: BACKTICK@8..9 "`" [] []
-                2: TEMPLATE_ELEMENT_LIST@9..16
+              1: JS_UNKNOWN_EXPRESSION@8..17
+                0: BACKTICK@8..9 "`" [] []
+                1: JS_UNKNOWN@9..16
                   0: TEMPLATE_CHUNK_ELEMENT@9..13
                     0: TEMPLATE_CHUNK@9..13 "foo " [] []
-                  1: TEMPLATE_ELEMENT@13..16
+                  1: JS_UNKNOWN@13..16
                     0: DOLLAR_CURLY@13..15 "${" [] []
-                    1: (empty)
-                    2: R_CURLY@15..16 "}" [] []
-                3: BACKTICK@16..17 "`" [] []
+                    1: R_CURLY@15..16 "}" [] []
+                2: BACKTICK@16..17 "`" [] []
       1: (empty)
   3: EOF@17..18 "" [Whitespace("\n")] []
 --

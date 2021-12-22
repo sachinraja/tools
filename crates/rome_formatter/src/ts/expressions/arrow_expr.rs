@@ -32,9 +32,9 @@ impl ToFormatElement for JsArrowFunctionExpression {
 		}
 
 		tokens.push(space_token());
-		tokens.push(formatter.format_token(&self.fat_arrow_token()?)?);
+		tokens.push(formatter.format_token(&self.fat_arrow_token())?);
 		tokens.push(space_token());
-		tokens.push(formatter.format_node(self.body()?)?);
+		tokens.push(formatter.format_node(self.body())?);
 
 		Ok(concat_elements(tokens))
 	}

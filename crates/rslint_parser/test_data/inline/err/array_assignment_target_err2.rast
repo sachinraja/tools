@@ -287,21 +287,21 @@ JsModule {
   3: EOF@100..101 "" [Whitespace("\n")] []
 --
 error[SyntaxError]: expected `,` but instead found `a`
-  ┌─ array_assignment_target_err.js:1:4
+  ┌─ array_assignment_target_err2.js:1:4
   │
 1 │ [a a, ++b, ] = test;
   │    ^ unexpected
 
 --
 error[SyntaxError]: Invalid assignment to `++b`
-  ┌─ array_assignment_target_err.js:1:7
+  ┌─ array_assignment_target_err2.js:1:7
   │
 1 │ [a a, ++b, ] = test;
   │       ^^^ This expression cannot be assigned to
 
 --
 error[SyntaxError]: rest element may not have a trailing comma
-  ┌─ array_assignment_target_err.js:2:15
+  ┌─ array_assignment_target_err2.js:2:15
   │
 2 │ [a, c, ...rest,] = test;
   │        -------^ Remove the trailing comma here
@@ -310,35 +310,35 @@ error[SyntaxError]: rest element may not have a trailing comma
 
 --
 error[SyntaxError]: expected an expression, or an assignment but instead found ','
-  ┌─ array_assignment_target_err.js:3:6
+  ┌─ array_assignment_target_err2.js:3:6
   │
 3 │ [a = , = "test"] = test;
   │      ^ Expected an expression, or an assignment here
 
 --
 error[SyntaxError]: expected an identifier, or an assignment target but instead found '='
-  ┌─ array_assignment_target_err.js:3:8
+  ┌─ array_assignment_target_err2.js:3:8
   │
 3 │ [a = , = "test"] = test;
   │        ^ Expected an identifier, or an assignment target here
 
 --
 error[SyntaxError]: expected `,` but instead found `b`
-  ┌─ array_assignment_target_err.js:4:5
+  ┌─ array_assignment_target_err2.js:4:5
   │
 4 │ [[a b] [c]]= test;
   │     ^ unexpected
 
 --
 error[SyntaxError]: expected `,` but instead found `[`
-  ┌─ array_assignment_target_err.js:4:8
+  ┌─ array_assignment_target_err2.js:4:8
   │
 4 │ [[a b] [c]]= test;
   │        ^ unexpected
 
 --
 error[SyntaxError]: expected `,` but instead found `:`
-  ┌─ array_assignment_target_err.js:5:3
+  ┌─ array_assignment_target_err2.js:5:3
   │
 5 │ [a: b] = c
   │   ^ unexpected

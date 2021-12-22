@@ -40,7 +40,7 @@ pub fn generate_nodes(ast: &AstSrc) -> Result<String> {
 							}
 						} else {
 							quote! {
-								pub fn #method_name(&self) -> SyntaxResult<SyntaxToken> {
+								pub fn #method_name(&self) -> SyntaxToken {
 									support::required_token(&self.syntax, #slot_index)
 								}
 							}
@@ -65,7 +65,7 @@ pub fn generate_nodes(ast: &AstSrc) -> Result<String> {
 							}
 						} else {
 							quote! {
-								pub fn #method_name(&self) -> SyntaxResult<#ty> {
+								pub fn #method_name(&self) -> #ty {
 									support::required_node(&self.syntax, #slot_index)
 								}
 							}
@@ -100,7 +100,7 @@ pub fn generate_nodes(ast: &AstSrc) -> Result<String> {
 					}
 				} else {
 					quote! {
-						.field(#string_name, &support::DebugSyntaxResult(self.#name()))
+						.field(#string_name, &self.#name())
 					}
 				}
 			});
@@ -462,7 +462,7 @@ pub fn generate_nodes(ast: &AstSrc) -> Result<String> {
 				}
 
 				impl IntoIterator for #list_name {
-					type Item = SyntaxResult<#element_type>;
+					type Item = #element_type;
 					type IntoIter = AstSeparatedListNodesIterator<#element_type>;
 
 					fn into_iter(self) -> Self::IntoIter {
@@ -471,7 +471,7 @@ pub fn generate_nodes(ast: &AstSrc) -> Result<String> {
 				}
 
 				impl IntoIterator for &#list_name {
-					type Item = SyntaxResult<#element_type>;
+					type Item = #element_type;
 					type IntoIter = AstSeparatedListNodesIterator<#element_type>;
 
 					fn into_iter(self) -> Self::IntoIter {
@@ -571,9 +571,8 @@ pub fn generate_nodes(ast: &AstSrc) -> Result<String> {
 	use crate::{
 		ast::*,
 		JsSyntaxKind::{self, *},
-		SyntaxNode, SyntaxToken,
-		SyntaxResult
-	};
+		SyntaxNode, SyntaxToken
+		};
 
 
 		#(#node_defs)*

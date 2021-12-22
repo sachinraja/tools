@@ -11,9 +11,9 @@ impl ToFormatElement for JsMethodClassMember {
 		} else {
 			empty_element()
 		};
-		let name = formatter.format_node(self.name()?)?;
-		let params = formatter.format_node(self.parameters()?)?;
-		let body = formatter.format_node(self.body()?)?;
+		let name = formatter.format_node(self.name())?;
+		let params = formatter.format_node(self.parameters())?;
+		let body = formatter.format_node(self.body())?;
 		Ok(format_elements![
 			static_token,
 			name,

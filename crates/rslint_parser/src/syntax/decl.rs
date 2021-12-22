@@ -9,7 +9,7 @@ use crate::parser::ParserProgress;
 use crate::syntax::binding::parse_binding_pattern_with_optional_default;
 use crate::syntax::function::function_body;
 use crate::syntax::js_parse_error;
-use crate::syntax::js_parse_error::expected_binding;
+use crate::syntax::js_parse_error::expected_binding_pattern;
 use crate::{JsSyntaxKind::*, *};
 
 #[allow(clippy::unnecessary_unwrap)]
@@ -68,7 +68,7 @@ pub(super) fn parse_parameters_list(
 		if p.at(T![...]) {
 			let m = p.start();
 			p.bump_any();
-			parse_binding_pattern(p).or_add_diagnostic(p, expected_binding);
+			parse_binding_pattern(p).or_add_diagnostic(p, expected_binding_pattern);
 
 			// TODO #1725 Review error handling and recovery
 			// rest patterns cannot be optional: `...foo?: number[]`
@@ -80,7 +80,7 @@ pub(super) fn parse_parameters_list(
 				p.error(err);
 				let m = p.start();
 				p.bump_any();
-				m.complete(p, JS_UNKNOWN_BINDING);
+				m.complete(p, JS_UNKNOWN_BINDING_PATTERN);
 			}
 
 			// type annotation `...foo: number[]`
@@ -133,7 +133,7 @@ pub(super) fn parse_parameters_list(
 			let recovered_result = parse_param(p).or_recover(
 				p,
 				&ParseRecovery::new(
-					JS_UNKNOWN_BINDING,
+					JS_UNKNOWN_BINDING_PATTERN,
 					token_set![
 						T![ident],
 						T![await],

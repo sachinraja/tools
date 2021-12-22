@@ -54,9 +54,10 @@ impl ToFormatElement for JsAnyStatement {
 			JsAnyStatement::JsFunctionDeclaration(decl) => decl.to_format_element(formatter),
 			JsAnyStatement::JsClassDeclaration(decl) => decl.to_format_element(formatter),
 			JsAnyStatement::JsVariableStatement(decl) => decl.to_format_element(formatter),
-			JsAnyStatement::JsUnknownStatement(unknown_statement) => {
-				Ok(formatter.format_raw(unknown_statement.syntax()))
-			}
+			JsAnyStatement::JsUnknownStatement(unknown_statement) => Ok(formatter
+				.format_raw(unknown_statement.syntax())
+				.trim_start()
+				.trim_end()),
 			JsAnyStatement::JsTryFinallyStatement(try_finally) => {
 				try_finally.to_format_element(formatter)
 			}

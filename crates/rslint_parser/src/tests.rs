@@ -8,6 +8,7 @@ use rslint_errors::file::SimpleFile;
 use rslint_errors::termcolor::Buffer;
 use rslint_errors::{file::SimpleFiles, Emitter};
 use rslint_syntax::JsSyntaxKind;
+use std::fmt::Debug;
 use std::panic::catch_unwind;
 use std::path::{Path, PathBuf};
 
@@ -164,9 +165,12 @@ fn has_unknown_nodes(node: &SyntaxNode) -> bool {
         .any(|descendant| descendant.kind().is_unknown())
 }
 
-fn assert_errors_are_absent<T>(program: &Parse<T>, path: &Path) {
+fn assert_errors_are_absent<T: AstNode + Debug>(program: &Parse<T>, path: &Path) {
     let syntax = program.syntax();
-    if !program.has_errors() && !has_unknown_nodes(&syntax) {
+    let debug_tree = format!("{:?}", program.tree());
+    let has_missing_children = debug_tree.contains("missing (required)");
+
+    if !program.has_errors() && !has_unknown_nodes(&syntax) && !has_missing_children {
         return;
     }
 

@@ -25,9 +25,9 @@ pub use single_token_parse_recovery::SingleTokenParseRecovery;
 
 pub use crate::parser::parse_recovery::{ParseRecovery, RecoveryError, RecoveryResult};
 use crate::state::ParserStateCheckpoint;
-use crate::token_source::{Token, TokenSource, TokenSourceCheckpoint};
+use crate::token_source::{TokenSource, TokenSourceCheckpoint};
 use crate::*;
-use rslint_lexer::LexMode;
+use rslint_lexer::{LexMode, Token};
 
 /// Captures the progress of the parser and allows to test if the parsing is still making progress
 #[derive(Debug, Eq, Ord, PartialOrd, PartialEq, Hash, Default)]
@@ -152,11 +152,11 @@ impl<'s> Parser<'s> {
 
     /// Get the current token kind of the parser
     pub fn cur(&self) -> JsSyntaxKind {
-        self.tokens.current()
+        self.tokens.current().kind()
     }
 
     pub fn cur_range(&self) -> TextRange {
-        self.tokens.current_range()
+        *self.tokens.current().range()
     }
 
     /// Look ahead at a token and get its kind, **The max lookahead is 4**.
@@ -179,7 +179,7 @@ impl<'s> Parser<'s> {
     }
 
     pub fn last_range(&self) -> Option<TextRange> {
-        self.tokens.last_token().map(|t| t.range())
+        self.tokens.last_token().map(|t| *t.range())
     }
 
     /// Consume the next token if `kind` matches.
@@ -223,7 +223,7 @@ impl<'s> Parser<'s> {
 
     /// Tests if there's a line break before the current token (between the last and current)
     pub fn has_preceding_line_break(&self) -> bool {
-        self.tokens.has_preceding_line_break()
+        self.tokens.current().has_preceding_line_break()
     }
 
     /// Consume the next token if `kind` matches.

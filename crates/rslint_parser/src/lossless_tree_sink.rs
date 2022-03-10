@@ -1,10 +1,10 @@
-use crate::token_source::Token;
 use crate::{ParserError, TreeSink};
 use rome_js_syntax::{
     JsSyntaxKind::{self, *},
     SyntaxNode, SyntaxTreeBuilder, TextRange, TextSize,
 };
 use rome_rowan::TriviaPiece;
+use rslint_lexer::Token;
 
 /// Structure for converting events to a syntax tree representation, while preserving whitespace.
 ///

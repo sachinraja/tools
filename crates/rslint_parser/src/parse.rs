@@ -1,9 +1,9 @@
 //! Utilities for high level parsing of js code.
 
-use crate::token_source::Token;
 use crate::*;
 use rome_js_syntax::{AstNode, JsAnyRoot, JsExpressionSnipped, JsModule, JsScript, SyntaxNode};
 use rslint_errors::Severity;
+use rslint_lexer::Token;
 use std::marker::PhantomData;
 
 /// A utility struct for managing the result of a parser job

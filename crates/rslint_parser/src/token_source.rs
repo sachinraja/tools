@@ -4,46 +4,8 @@ use rome_rowan::TextSize;
 use rslint_errors::file::FileId;
 use rslint_errors::Diagnostic;
 use rslint_lexer::buffered_lexer::{BufferedLexer, BufferedLexerCheckpoint};
-use rslint_lexer::{LexMode, Lexer, LexerReturn, TextRange};
+use rslint_lexer::{LexMode, Lexer, LexerReturn, TextRange, Token};
 use std::collections::VecDeque;
-
-#[derive(Debug)]
-pub struct Token {
-    kind: JsSyntaxKind,
-    // TODO replace with size? Only needed because of `last_token`
-    range: TextRange,
-}
-
-impl Token {
-    fn new(kind: JsSyntaxKind, range: TextRange) -> Self {
-        Self { kind, range }
-    }
-
-    /// Returns the kind of the token
-    pub fn kind(&self) -> JsSyntaxKind {
-        self.kind
-    }
-
-    /// Returns the range in the source text
-    pub fn range(&self) -> TextRange {
-        self.range
-    }
-
-    /// Returns the start byte offset of the token in the source text
-    pub fn start(&self) -> TextSize {
-        self.range.start()
-    }
-
-    /// Returns the end byte offset of the token in the source text
-    pub fn end(&self) -> TextSize {
-        self.range.end()
-    }
-
-    /// Returns the token's length in bytes
-    pub fn len(&self) -> TextSize {
-        self.range.len()
-    }
-}
 
 /// The source of tokens for the parser
 pub struct TokenSource<'l> {
@@ -88,73 +50,53 @@ impl<'l> TokenSource<'l> {
     }
 
     fn next_non_trivia_token(&mut self) -> Vec<Diagnostic> {
-        // self.lookahead.pop_front();
+        self.lookahead.pop_front();
 
         let mut diagnostics = vec![];
-        let mut skipped = 1;
-        let mut result = self.lex_token();
+        let mut skipped = 0;
 
-        while result.kind().is_trivia() {
+        for mut result in &mut self.lexer {
             skipped += 1;
-            result = self.lex_token();
+
+            self.tokens.push(*result.token());
+
             if let Some(diagnostic) = result.take_diagnostic() {
-                diagnostics.push(*diagnostic.clone());
+                diagnostics.push(diagnostic.as_ref().clone());
+            }
+
+            if !result.kind().is_trivia() {
+                break;
             }
         }
 
-        // if self.lookahead_offset != 0 {
-        //     debug_assert!(self.lookahead_offset >= skipped);
-        //     self.lookahead_offset -= skipped;
-        // }
+        if self.lookahead_offset != 0 {
+            debug_assert!(self.lookahead_offset >= skipped);
+            self.lookahead_offset -= skipped;
+        }
 
         diagnostics
     }
 
-    fn lex_token(&mut self) -> LexerReturn {
-        if self.lexer.current() == EOF {
-            LexerReturn::ok(EOF)
-        } else {
-            let result = self.lexer.next();
-            let token = Token::new(result.kind(), self.lexer.current_range());
-            self.tokens.push(token);
-
-            result
-        }
-    }
-
-    /// Returns the kind of the current non-trivia token
     #[inline(always)]
-    pub fn current(&self) -> JsSyntaxKind {
-        self.lexer.current()
-    }
-
-    /// Returns the range of the current non-trivia token
-    #[inline(always)]
-    pub fn current_range(&self) -> TextRange {
-        self.lexer.current_range()
+    pub fn current(&self) -> &Token {
+        self.tokens.last().unwrap()
     }
 
     /// Gets the kind of the nth non-trivia token
     #[inline(always)]
     pub fn nth(&mut self, n: usize) -> JsSyntaxKind {
         if n == 0 {
-            self.current()
+            self.current().kind()
         } else {
             self.lookahead(n).map_or(EOF, |lookahead| lookahead.kind)
         }
-    }
-
-    /// Returns true if the current token is preceded by a line break
-    #[inline(always)]
-    pub fn has_preceding_line_break(&self) -> bool {
-        self.lexer.has_preceding_line_break()
     }
 
     /// Returns true if the nth non-trivia token is preceded by a line break
     #[inline(always)]
     pub fn has_nth_preceding_line_break(&mut self, n: usize) -> bool {
         if n == 0 {
-            self.has_preceding_line_break()
+            self.current().has_preceding_line_break()
         } else {
             self.lookahead(n)
                 .map_or(false, |lookahead| lookahead.after_newline)
@@ -165,15 +107,14 @@ impl<'l> TokenSource<'l> {
     fn lookahead(&mut self, n: usize) -> Option<Lookahead> {
         assert_ne!(n, 0);
 
-        // if let Some(lookahead) = self.lookahead.get(n - 1) {
-        //     return Some(*lookahead);
-        // }
+        if let Some(lookahead) = self.lookahead.get(n - 1) {
+            return Some(*lookahead);
+        }
 
         let mut iter = self.lexer.lookahead().skip(self.lookahead_offset);
-
         let mut remaining = n - self.lookahead.len();
-        while let Some(item) = iter.next() {
-            // self.lookahead_offset += 1;
+        for item in iter {
+            self.lookahead_offset += 1;
 
             if !item.kind().is_trivia() {
                 remaining -= 1;
@@ -182,14 +123,15 @@ impl<'l> TokenSource<'l> {
                     after_newline: item.has_preceding_line_break(),
                     kind: item.kind(),
                 };
-                //
-                // self.lookahead.push_back(lookahead);
+
+                self.lookahead.push_back(lookahead);
 
                 if remaining == 0 {
                     return Some(lookahead);
                 }
             }
         }
+
         None
     }
 
@@ -216,7 +158,7 @@ impl<'l> TokenSource<'l> {
             .rev()
             // Skip the current token
             .skip(1)
-            .find(|t| !t.kind.is_trivia())
+            .find(|t| !t.kind().is_trivia())
     }
 
     /// Returns the source text
@@ -228,7 +170,7 @@ impl<'l> TokenSource<'l> {
     /// Bumps the current token and moves the parser to the next non-trivia token
     #[inline(always)]
     pub fn bump(&mut self) -> Vec<Diagnostic> {
-        if self.current() == EOF {
+        if self.current().kind() == EOF {
             vec![]
         } else {
             self.next_non_trivia_token()
@@ -236,13 +178,12 @@ impl<'l> TokenSource<'l> {
     }
 
     pub fn re_lex(&mut self, mode: LexMode) -> LexerReturn {
-        let current_kind = self.current();
-        let result = self.lexer.re_lex(mode);
+        let current = *self.current();
+        let result = self.lexer.re_lex(current, mode);
 
-        if result.kind() != current_kind {
+        if result.kind() != current.kind() {
             self.tokens.pop();
-            self.tokens
-                .push(Token::new(result.kind(), self.lexer.current_range()));
+            self.tokens.push(*result.token());
         }
 
         result
@@ -251,7 +192,7 @@ impl<'l> TokenSource<'l> {
     /// Returns the byte offset of the current token from the start of the source document
     #[inline(always)]
     pub fn position(&self) -> TextSize {
-        self.current_range().start()
+        self.current().range().start()
     }
 
     #[inline(always)]

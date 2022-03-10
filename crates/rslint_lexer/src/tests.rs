@@ -18,32 +18,30 @@ macro_rules! assert_lex {
         let mut tok_idx = TextSize::default();
 
         let mut new_str = String::with_capacity($src.len());
-        let mut tokens = Vec::new();
-
-        while lexer.next().kind() != EOF {
-            tokens.push((lexer.current(), lexer.current_range()));
-        }
+        let mut tokens = lexer.into_iter().map(|ret| ret.token).collect::<Vec<_>>();
+        // remove eof
+        tokens.pop();
 
         $(
             assert_eq!(
-                tokens[idx].0,
+                tokens[idx].kind(),
                 rome_js_syntax::JsSyntaxKind::$kind,
                 "expected token kind {}, but found {:?}",
                 stringify!($kind),
-                tokens[idx].0,
+                tokens[idx].kind(),
             );
 
             assert_eq!(
-                tokens[idx].1.len(),
+                tokens[idx].len(),
                 TextSize::from($len),
                 "expected token length of {}, but found {:?} for token {:?}",
                 $len,
-                tokens[idx].1.len(),
-                tokens[idx].0,
+                tokens[idx].len(),
+                tokens[idx].kind(),
             );
 
-            new_str.push_str($src.get(tokens[idx].1.as_range()).unwrap());
-            tok_idx += tokens[idx].1.len();
+            new_str.push_str($src.get(tokens[idx].range().as_range()).unwrap());
+            tok_idx += tokens[idx].len();
 
             idx += 1;
         )*
@@ -53,7 +51,7 @@ macro_rules! assert_lex {
                 "expected {} tokens but lexer returned {}, first unexpected token is '{:?}'",
                 idx,
                 tokens.len(),
-                tokens[idx].0
+                tokens[idx].kind()
             );
         } else {
             assert_eq!(idx, tokens.len());
@@ -73,14 +71,13 @@ fn losslessness(string: String) -> bool {
     let (sender, receiver) = channel();
     thread::spawn(move || {
         let mut lexer = Lexer::from_str(&cloned, 0);
-        let mut tokens = vec![];
-
-        while lexer.next().kind() != EOF {
-            tokens.push(lexer.current_range());
-        }
+        let ranges = lexer
+            .into_iter()
+            .map(|result| result.token.range())
+            .collect::<Vec<_>>();
 
         sender
-            .send(tokens)
+            .send(ranges)
             .expect("Could not send tokens to receiver");
     });
     let token_ranges = receiver
@@ -1401,22 +1398,22 @@ fn keywords() {
         );
 
         let mut lexer = Lexer::from_str(keyword, 0);
-        lexer.next();
+        let lexed = lexer.next();
 
-        let lexed_kind = lexer.current();
         assert_eq!(
-            lexed_kind, kind,
+            lexed.kind(),
+            kind,
             "Expected token '{keyword}' to be of kind {:?} but is {:?}.",
-            kind, lexed_kind
+            kind,
+            lexed.kind()
         );
 
-        let lexed_range = lexer.current_range();
         assert_eq!(
-            lexed_range.len(),
+            lexed.range().len(),
             TextSize::from(keyword.len() as u32),
             "Expected lexed keyword to be of len {} but has length {:?}",
             keyword.len(),
-            lexed_range.len()
+            lexed.range().len()
         );
 
         assert_eq!(lexer.next().kind(), EOF);

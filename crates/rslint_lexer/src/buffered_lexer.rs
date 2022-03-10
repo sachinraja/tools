@@ -1,6 +1,5 @@
-use crate::{LexMode, Lexer, LexerReturn, LexerState, TextRange, TextSize};
+use crate::{LexMode, Lexer, LexerReturn, TextSize, Token};
 use rome_js_syntax::{JsSyntaxKind, JsSyntaxKind::EOF};
-use rslint_errors::Diagnostic;
 use std::collections::VecDeque;
 use std::iter::FusedIterator;
 
@@ -9,133 +8,58 @@ use std::iter::FusedIterator;
 pub struct BufferedLexer<'t> {
     /// Stores the information about the tokens between the `lexer`s current token and
     /// current position of the buffered token.
-    lookbehind: VecDeque<Lookbehind>,
+    lookbehind: VecDeque<LexerReturn>,
 
     /// Underlying lexer. May be ahead if iterated with lookahead
-    lexer: Lexer<'t>,
+    inner: Lexer<'t>,
 }
 
 impl<'t> BufferedLexer<'t> {
     pub fn new(lexer: Lexer<'t>) -> BufferedLexer<'t> {
         BufferedLexer {
-            lexer,
+            inner: lexer,
             lookbehind: VecDeque::new(),
         }
     }
 
     #[inline(always)]
     pub fn next(&mut self) -> LexerReturn {
-        self.lookbehind.pop_front();
-
-        if let Some(next) = self.lookbehind.front_mut() {
-            // Fine to take the diagnostic, it isn't needed anymore. Avoids cloning
-            let diagnostic = next.diagnostic.take();
-            LexerReturn::new(next.kind, diagnostic)
+        if let Some(next) = self.lookbehind.pop_front() {
+            next
         } else {
-            let lexer = &mut self.lexer;
-            let result = lexer.next();
-            self.lookbehind.push_back(Lookbehind {
-                kind: result.kind,
-                range: lexer.current_range(),
-                after_newline: lexer.has_preceding_line_break(),
-                diagnostic: None, // diagnostic has already been consumed.
-            });
-
-            result
-        }
-    }
-
-    /// Returns the kind of the current token
-    #[inline(always)]
-    pub fn current(&self) -> JsSyntaxKind {
-        if let Some(current) = &self.lookbehind.front() {
-            current.kind
-        } else {
-            self.lexer.current()
-        }
-    }
-
-    #[inline(always)]
-    pub fn current_range(&self) -> TextRange {
-        if let Some(current) = &self.lookbehind.front() {
-            current.range
-        } else {
-            self.lexer.current_range()
-        }
-    }
-
-    /// Tests if there's a line break before the current token.
-    #[inline(always)]
-    pub fn has_preceding_line_break(&self) -> bool {
-        if let Some(current) = &self.lookbehind.front() {
-            current.after_newline
-        } else {
-            self.lexer.has_preceding_line_break()
+            self.inner.next()
         }
     }
 
     /// Returns the source text
     #[inline]
     pub fn source(&self) -> &'t str {
-        self.lexer.source()
+        self.inner.source()
     }
 
     pub fn checkpoint(&self) -> BufferedLexerCheckpoint {
         if let Some(current) = self.lookbehind.front() {
             BufferedLexerCheckpoint {
-                position: current.range.end(),
-                current_start: current.range.start(),
-                current_kind: current.kind,
-                current_after_new_line: current.after_newline,
-                // TODO take correct lexer state
-                // state: self.lexer.state.clone(),
+                position: current.token.start(),
+                after_new_line: current.token.has_preceding_line_break(),
             }
         } else {
             BufferedLexerCheckpoint {
-                position: TextSize::from(self.lexer.position as u32),
-                current_start: TextSize::from(self.lexer.current_start as u32),
-                current_kind: self.lexer.current_kind,
-                current_after_new_line: self.lexer.current_after_new_line,
-                // state: self.lexer.state.clone(),
+                position: self.inner.position(),
+                after_new_line: self.inner.state.after_newline,
             }
         }
     }
 
     pub fn rewind(&mut self, checkpoint: BufferedLexerCheckpoint) {
-        assert!(self.lexer.position >= u32::from(checkpoint.position) as usize);
-        self.lexer.position = u32::from(checkpoint.position) as usize;
-        self.lexer.current_start = u32::from(checkpoint.current_start) as usize;
-        self.lexer.current_kind = checkpoint.current_kind;
-        self.lexer.current_after_new_line = checkpoint.current_after_new_line;
-
+        self.inner.rewind(checkpoint.position);
+        self.inner.state.after_newline = checkpoint.after_new_line;
         self.lookbehind.clear();
-
-        self.lookbehind.push_back(Lookbehind {
-            kind: self.lexer.current(),
-            range: self.lexer.current_range(),
-            after_newline: self.lexer.has_preceding_line_break(),
-            diagnostic: None, // Not needed for the current token
-        });
     }
 
-    pub fn re_lex(&mut self, mode: LexMode) -> LexerReturn {
-        if let Some(current) = self.lookbehind.pop_front() {
-            self.lexer.current_start = u32::from(current.range.start()) as usize;
-            self.lexer.position = u32::from(current.range.end()) as usize;
-            // TODO restore `after_newline` too?
-            self.lexer.current_after_new_line = current.after_newline;
-            self.lexer.current_kind = current.kind;
-        }
-
+    pub fn re_lex(&mut self, token: Token, mode: LexMode) -> LexerReturn {
         self.lookbehind.clear();
-        let result = self.lexer.re_lex(mode);
-
-        self.lookbehind.push_back(Lookbehind {
-            kind: result.kind,
-            range: self.lexer.current_range(),
-            after_newline: self.lexer.has_preceding_line_break(),
-            diagnostic: None, // diagnostic has already been consumed.
-        });
+        let result = self.inner.re_lex(token, mode);
 
         result
     }
@@ -149,101 +73,91 @@ impl<'t> BufferedLexer<'t> {
 #[derive(Debug)]
 pub struct LookaheadIterator<'l, 't> {
     buffered: &'l mut BufferedLexer<'t>,
-    nth: u32,
+    nth: usize,
 }
 
 impl<'l, 't> LookaheadIterator<'l, 't> {
     fn new(lexer: &'l mut BufferedLexer<'t>) -> Self {
         Self {
             buffered: lexer,
-            nth: 0,
+            nth: 1,
         }
     }
 }
 
 impl<'l, 't> Iterator for LookaheadIterator<'l, 't> {
-    type Item = Lookahead;
+    type Item = Token;
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        let lookbehind = &self.buffered.lookbehind;
-        self.nth += 1;
-
-        if let Some(lookbehind) = lookbehind.get(self.nth as usize) {
-            let lookahead = Lookahead::from(lookbehind);
-            return Some(lookahead);
-        }
-
-        let lexer = &mut self.buffered.lexer;
-        if lexer.current() == EOF {
+        if self.nth == 0 {
             return None;
         }
 
-        let lex_return = lexer.next();
+        if let Some(lexer_return) = self.buffered.lookbehind.get((self.nth - 1) as usize) {
+            self.nth += 1;
+            return Some(*lexer_return.token());
+        }
 
-        let lookbehind = Lookbehind {
-            kind: lex_return.kind,
-            range: lexer.current_range(),
-            after_newline: lexer.has_preceding_line_break(),
-            diagnostic: lex_return.diagnostic,
-        };
+        let lex_return = self.buffered.inner.next();
+        let token = lex_return.token;
+        self.buffered.lookbehind.push_back(lex_return);
 
-        let lookahead = Lookahead::from(&lookbehind);
-        self.buffered.lookbehind.push_back(lookbehind);
-        self.nth += 1;
-        Some(lookahead)
+        if token.kind() == EOF {
+            // Marks that the iterator is at an end
+            self.nth = 0;
+        } else {
+            self.nth += 1;
+        }
+
+        Some(token)
     }
 }
 
 impl<'l, 't> FusedIterator for LookaheadIterator<'l, 't> {}
 
-#[derive(Debug)]
-pub struct Lookbehind {
-    kind: JsSyntaxKind,
-    range: TextRange,
-    after_newline: bool,
-    diagnostic: Option<Box<Diagnostic>>,
-}
+impl<'l, 't> IntoIterator for &'l mut BufferedLexer<'t> {
+    type Item = LexerReturn;
+    type IntoIter = BufferedLexerIterator<'l, 't>;
 
-#[derive(Debug)]
-pub struct Lookahead {
-    kind: JsSyntaxKind,
-    range: TextRange,
-    after_newline: bool,
-}
-
-impl Lookahead {
-    pub fn kind(&self) -> JsSyntaxKind {
-        self.kind
-    }
-
-    pub fn range(&self) -> TextRange {
-        self.range
-    }
-
-    pub fn has_preceding_line_break(&self) -> bool {
-        self.after_newline
-    }
-}
-
-impl From<&Lookbehind> for Lookahead {
-    fn from(behind: &Lookbehind) -> Self {
-        Lookahead {
-            kind: behind.kind,
-            range: behind.range,
-            after_newline: behind.after_newline,
+    fn into_iter(self) -> Self::IntoIter {
+        BufferedLexerIterator {
+            inner: self,
+            returned_eof: false,
         }
     }
 }
 
+pub struct BufferedLexerIterator<'l, 't> {
+    inner: &'l mut BufferedLexer<'t>,
+    returned_eof: bool,
+}
+
+impl Iterator for BufferedLexerIterator<'_, '_> {
+    type Item = LexerReturn;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.returned_eof {
+            return None;
+        }
+
+        let result = self.inner.next();
+
+        if result.kind() == EOF {
+            self.returned_eof = true;
+        }
+
+        Some(result)
+    }
+}
+
+impl FusedIterator for BufferedLexerIterator<'_, '_> {}
+
 #[derive(Debug)]
 pub struct BufferedLexerCheckpoint {
     position: TextSize,
-    current_start: TextSize,
-    current_kind: JsSyntaxKind,
-    current_after_new_line: bool,
-    // TODO remove
-    // state: LexerState,
+    after_new_line: bool, // TODO remove
+                          // state: LexerState
 }
 
 #[cfg(test)]
@@ -258,11 +172,11 @@ mod tests {
         let lexer = Lexer::from_str("let a\n = 5", 0);
         let mut buffered = BufferedLexer::new(lexer);
 
-        buffered.next();
-        assert_eq!(buffered.current(), T![let]);
-        assert!(!buffered.has_preceding_line_break());
+        let current = *buffered.next().token();
+        assert_eq!(current.kind(), T![let]);
+        assert!(!current.has_preceding_line_break());
         assert_eq!(
-            buffered.current_range(),
+            current.range(),
             TextRange::at(TextSize::from(0), TextSize::from(3))
         );
 
@@ -270,8 +184,11 @@ mod tests {
         assert_eq!(buffered.next().kind(), T![ident]);
         assert_eq!(buffered.next().kind(), NEWLINE);
         assert_eq!(buffered.next().kind(), WHITESPACE);
-        assert_eq!(buffered.next().kind(), T![=]);
-        assert!(buffered.has_preceding_line_break());
+
+        let current = *buffered.next().token();
+        assert_eq!(current.kind(), T![=]);
+        assert!(current.has_preceding_line_break());
+
         assert_eq!(buffered.next().kind(), WHITESPACE);
         assert_eq!(buffered.next().kind(), JS_NUMBER_LITERAL);
         assert_eq!(buffered.next().kind(), T![EOF]);
@@ -282,11 +199,11 @@ mod tests {
         let lexer = Lexer::from_str("let a\n = 5", 0);
         let mut buffered = BufferedLexer::new(lexer);
 
-        buffered.next();
-        assert_eq!(buffered.current(), T![let]);
-        assert!(!buffered.has_preceding_line_break());
+        let current = *buffered.next().token();
+        assert_eq!(current.kind(), T![let]);
+        assert!(!current.has_preceding_line_break());
         assert_eq!(
-            buffered.current_range(),
+            current.range(),
             TextRange::at(TextSize::from(0), TextSize::from(3))
         );
 
@@ -302,17 +219,16 @@ mod tests {
             assert_eq!(nth3.kind(), NEWLINE);
         }
 
-        assert_eq!(buffered.current(), T![let]);
-        assert_eq!(buffered.next().kind(), WHITESPACE);
-
         assert_eq!(
             buffered
                 .lookbehind
                 .iter()
-                .map(|entry| entry.kind)
+                .map(|entry| entry.kind())
                 .collect::<Vec<_>>(),
             vec![WHITESPACE, T![ident], NEWLINE]
         );
+
+        assert_eq!(buffered.next().kind(), WHITESPACE);
 
         {
             let mut lookahead = buffered.lookahead();
@@ -333,8 +249,10 @@ mod tests {
         assert_eq!(buffered.next().kind(), T![ident]);
         assert_eq!(buffered.next().kind(), NEWLINE);
         assert_eq!(buffered.next().kind(), WHITESPACE);
-        assert_eq!(buffered.next().kind(), T![=]);
-        assert!(buffered.has_preceding_line_break());
+
+        let current = *buffered.next().token();
+        assert_eq!(current.kind(), T![=]);
+        assert!(current.has_preceding_line_break());
         assert_eq!(buffered.next().kind(), WHITESPACE);
         assert_eq!(buffered.next().kind(), JS_NUMBER_LITERAL);
         assert_eq!(buffered.next().kind(), T![EOF]);

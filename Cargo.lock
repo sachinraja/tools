@@ -1518,6 +1518,7 @@ dependencies = [
  "rustc-hash",
  "serde",
  "text-size",
+ "thiserror",
 ]
 
 [[package]]

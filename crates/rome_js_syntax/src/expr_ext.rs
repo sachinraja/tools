@@ -1,14 +1,13 @@
 //! Extensions for things which are not easily generated in ast expr nodes
 use crate::numbers::{parse_js_big_int, parse_js_number};
 use crate::{
-    AstNode, AstSeparatedList, JsArrayExpression, JsArrayHole, JsAssignmentExpression,
-    JsBigIntLiteralExpression, JsBinaryExpression, JsLiteralMemberName, JsLogicalExpression,
-    JsNumberLiteralExpression, JsObjectExpression, JsStringLiteralExpression, JsTemplate,
-    JsUnaryExpression, SyntaxResult, SyntaxToken,
+    JsArrayExpression, JsArrayHole, JsAssignmentExpression, JsBigIntLiteralExpression,
+    JsBinaryExpression, JsLiteralMemberName, JsLogicalExpression, JsNumberLiteralExpression,
+    JsObjectExpression, JsStringLiteralExpression, JsTemplate, JsUnaryExpression, SyntaxToken, T,
 };
 use crate::{JsPreUpdateExpression, JsSyntaxKind::*};
 use num_bigint::BigInt;
-use rome_rowan::{NodeOrToken, SyntaxText, TextRange, TextSize};
+use rome_rowan::{NodeOrToken, SyntaxResult, SyntaxText, TextRange, TextSize};
 use std::cmp::Ordering;
 
 impl JsLiteralMemberName {

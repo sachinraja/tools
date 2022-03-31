@@ -1,6 +1,7 @@
 //! Extra utilities for untyped syntax nodes, syntax tokens, and AST nodes.
 
-use crate::{AstNode, SyntaxNode, SyntaxToken};
+use crate::{JsLanguage, SyntaxNode, SyntaxToken};
+use rome_rowan::AstNode;
 
 /// Extensions to rowan's SyntaxNode
 pub trait SyntaxNodeExt {
@@ -8,7 +9,7 @@ pub trait SyntaxNodeExt {
     fn to_node(&self) -> &SyntaxNode;
 
     /// Check if the node is a certain AST node and that it can be casted to it.
-    fn is<T: AstNode>(&self) -> bool {
+    fn is<T: AstNode<JsLanguage>>(&self) -> bool {
         T::can_cast(self.to_node().kind())
     }
 
@@ -16,7 +17,7 @@ pub trait SyntaxNodeExt {
     ///
     /// # Panics
     /// Panics if the underlying node cannot be cast to the AST node
-    fn to<T: AstNode>(&self) -> T {
+    fn to<T: AstNode<JsLanguage>>(&self) -> T {
         T::cast(self.to_node().to_owned()).unwrap_or_else(|| {
             panic!(
                 "Tried to cast node {:?} as `{:?}` but was unable to cast",
@@ -27,7 +28,7 @@ pub trait SyntaxNodeExt {
     }
 
     /// Try to cast this node to a certain AST node
-    fn try_to<T: AstNode>(&self) -> Option<T> {
+    fn try_to<T: AstNode<JsLanguage>>(&self) -> Option<T> {
         T::cast(self.to_node().to_owned())
     }
 

@@ -1,9 +1,10 @@
 use crate::{
     JsAnyArrowFunctionParameters, JsAnyBinding, JsAnyClass, JsAnyFunction, JsAnyFunctionBody,
-    JsClassMemberList, JsExtendsClause, SyntaxResult, SyntaxToken, TsAnyPropertyAnnotation,
+    JsClassMemberList, JsExtendsClause, SyntaxToken, TsAnyPropertyAnnotation,
     TsAnyVariableAnnotation, TsImplementsClause, TsReturnTypeAnnotation, TsTypeAnnotation,
     TsTypeParameters,
 };
+use rome_rowan::SyntaxResult;
 
 impl JsAnyClass {
     pub fn abstract_token(&self) -> Option<SyntaxToken> {

@@ -1,6 +1,7 @@
 //! Extended AST node definitions for statements which are unique and special enough to generate code for manually
 
-use crate::{JsVariableDeclaration, SyntaxResult};
+use crate::{JsVariableDeclaration, T};
+use rome_rowan::SyntaxResult;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum JsVariableKind {

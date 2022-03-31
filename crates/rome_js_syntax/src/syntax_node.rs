@@ -21,8 +21,9 @@ pub type SyntaxElement = rome_rowan::SyntaxElement<JsLanguage>;
 pub type SyntaxNodeChildren = rome_rowan::SyntaxNodeChildren<JsLanguage>;
 pub type SyntaxElementChildren = rome_rowan::SyntaxElementChildren<JsLanguage>;
 pub type SyntaxList = rome_rowan::SyntaxList<JsLanguage>;
-pub type SyntaxSlots = rome_rowan::SyntaxSlots<JsLanguage>;
-pub type SyntaxSlot = rome_rowan::SyntaxSlot<JsLanguage>;
+pub type AstNode = rome_rowan::AstNode<JsLanguage>;
+pub type AstNodeList<N> = rome_rowan::AstNodeList<JsLanguage, N>;
+pub type AstSeparatedList<N> = rome_rowan::AstSeparatedList<JsLanguage, N>;
 
 pub use rome_rowan::{Direction, NodeOrToken};
 

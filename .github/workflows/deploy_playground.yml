@@ -21,7 +21,7 @@ jobs:
       - run: npm install --prefix crates/rome_playground
       - uses: jetli/wasm-pack-action@v0.3.0
       - run: wasm-pack build crates/rome_playground --target web --release
-      - run: npm run build --prefix crates/rome_playground
+      - run: npm run build --prefix crates/rome_playground -- --base=/$GITHUB_SHA/
       - name: Publish
         uses: jakejarvis/s3-sync-action@master
         env:

@@ -5,7 +5,7 @@
 		"start": "vite",
 		"preview": "vite preview",
 		"build": "npm run build:wasm && npm run build:js",
-		"build:js": "tsc && vite build",
+		"build:js": "tsc && vite build --base playground",
 		"build:wasm": "wasm-pack build --target web --release",
 		"format": "cargo run -p rome_cli --release -- format ./src"
 	},
